@@ -1,4 +1,5 @@
 #include "main.h"
+#include "math.h"
 #include "lighting.h"
 
 #define MS_PER_CYCLE 5000
@@ -327,10 +328,31 @@ InitLists( )
     GLfloat position[] = {0.0,0.0,1.5,1.0};
     glutSetWindow(MainWindow);
     // create the object:
+    const char* filename = "/home/tadeze/projects/comgraph/Finalproject/multivariate.csv";
+    vector<vector<double> > points = readcsv(filename);
+    std::cout<<points.size();
+
     BoxList = glGenLists(1);
     glNewList(BoxList, GL_COMPILE);
-    MjbSphere(0.8,50,50);
+//    if (points.size() >50)
+
+    glPointSize(5.0);
+    glColor3f(1.0, 1.0, 0.0);
+    glBegin(GL_POINTS);
+    for (int j = 0; j< points.size(); j++)
+    {
+        vector<double> pp = points[j];
+        glVertex3f(pp[0],pp[1],pp[2]);
+        //glVertex3f(Curves[j].p1.x, Curves[j].p1.y, Curves[j].p1.z);
+        //glVertex3f(Curves[j].p2.x, Curves[j].p2.y, Curves[j].p2.z);
+        //glVertex3f(Curves[j].p3.x, Curves[j].p3.y, Curves[j].p3.z);
+    }
+    glEnd();
+        /// /MjbSphere(0.8,50,50);
+
+
     glEndList();
+
     AxesList = glGenLists( 1 );
     glNewList( AxesList, GL_COMPILE );
     glLineWidth( AXES_WIDTH );
@@ -338,12 +360,16 @@ InitLists( )
     glLineWidth( 1. );
     glEndList( );
 
+
 }
 
 
 void drawPoints()
 {
     // draw the 3-d data points. Read from file for generate from random-distribution.
+
+
+
 
 }
 

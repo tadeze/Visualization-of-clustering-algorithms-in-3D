@@ -13,7 +13,7 @@ Code is in the textureMapping function.
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-
+#include<iostream>
 #define _USE_MATH_DEFINES
 #include <math.h>
 

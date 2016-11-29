@@ -4,8 +4,11 @@
 
 #ifndef PROJECT4_GEOMETRY_H
 #define PROJECT4_GEOMETRY_H
-
-
+#include<cmath>
+#include<string>
+#include<fstream>
+#include<armadillo>
+#define NUMCURVES 5
 struct Point
 {
     float x0, y0, z0;       // initial coordinates
@@ -68,4 +71,15 @@ RotateZ( Point *p, float deg, float xc, float yc, float zc )
     p->y = yp + yc;
     p->z = zp + zc;
 }
+
+Point* readPoints(std::string fileName)
+{
+
+}
+
+void generatePoints(int N)
+{
+
+}
+
 #endif //PROJECT4_GEOMETRY_H
