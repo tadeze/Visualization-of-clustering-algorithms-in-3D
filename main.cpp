@@ -208,31 +208,6 @@ Display( )
     glScalef( (GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale );
 
 
-    // Distortion
-    switch (Distortion)
-    {
-        case NOTEXTURE:
-            glDisable(GL_TEXTURE_2D);
-            break;
-
-        case DISTORTIONIMAGE:
-            Distort = true;
-            textureMapping();
-            glEnable(GL_TEXTURE_2D);
-            break;
-
-        default:
-            Distort = false;
-            textureMapping();
-            glEnable(GL_TEXTURE_2D);
-            break;
-
-
-
-    }
-
-
-
     // set the fog parameters:
 
     if( DepthCueOn != 0 )
@@ -325,30 +300,45 @@ InitLists( )
 {
 
 
-    GLfloat position[] = {0.0,0.0,1.5,1.0};
     glutSetWindow(MainWindow);
     // create the object:
-    const char* filename = "/home/tadeze/projects/comgraph/Finalproject/multivariate.csv";
+    const char* filename = "/home/tadeze/projects/comgraph/Finalproject/multivariated.csv";
+    const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/multivariate.csv";
     vector<vector<double> > points = readcsv(filename);
-    std::cout<<points.size();
+    vector<point > pointx = readPoints(filename);
+    //std::cout<<points.size();
+    //std::cout<<points.size();
 
     BoxList = glGenLists(1);
     glNewList(BoxList, GL_COMPILE);
 //    if (points.size() >50)
 
-    glPointSize(5.0);
-    glColor3f(1.0, 1.0, 0.0);
+    glColor3f(1.0,0.0,0.0);
+    MjbSphere(0.8,0.2,0.3,30,30);
+    glPushMatrix();
+    glPointSize(3.0);
+
+
     glBegin(GL_POINTS);
+    glColor3f(1.0, 1.0, 0.0);
     for (int j = 0; j< points.size(); j++)
     {
-        vector<double> pp = points[j];
-        glVertex3f(pp[0],pp[1],pp[2]);
+      //  vector<double> pp = points[j];
+      point px = pointx[j];
+
+
+       // glVertex3f(pp[0],pp[1],pp[2]);
+       // glColor3f(1.0, 0.0, 0.0);
+
+        glVertex3f(px.x,px.y,px.y);
         //glVertex3f(Curves[j].p1.x, Curves[j].p1.y, Curves[j].p1.z);
         //glVertex3f(Curves[j].p2.x, Curves[j].p2.y, Curves[j].p2.z);
         //glVertex3f(Curves[j].p3.x, Curves[j].p3.y, Curves[j].p3.z);
     }
+    //MjbSphere(0.8,0.2,0.1,50,50);
+
     glEnd();
-        /// /MjbSphere(0.8,50,50);
+
 
 
     glEndList();

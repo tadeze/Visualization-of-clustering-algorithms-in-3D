@@ -445,7 +445,7 @@ DrawPoint(struct point *p)
 }
 
 void
-MjbSphere(float radius, int slices, int stacks)
+MjbSphere(float radiusX, float radiusY,float radiusZ, int slices, int stacks)
 {
     struct point top, bot;		// top, bottom points
     struct point *p;
@@ -480,9 +480,9 @@ MjbSphere(float radius, int slices, int stacks)
             float x = xz * cos(lng);
             float z = -xz * sin(lng);
             p = PtsPointer(ilat, ilng);
-            p->x = radius * x;
-            p->y = radius * y;
-            p->z = radius * z;
+            p->x = radiusX * x;
+            p->y = radiusY * y;
+            p->z = radiusZ * z;
             p->nx = x;
             p->ny = y;
             p->nz = z;
@@ -501,18 +501,18 @@ MjbSphere(float radius, int slices, int stacks)
         }
     }
 
-    top.x = 0.;		top.y = radius;	top.z = 0.;
+    top.x = radiusX;		top.y = radiusY;	top.z = radiusZ;
     top.nx = 0.;		top.ny = 1.;		top.nz = 0.;
     top.s = 0.;		top.t = 1.;
 
-    bot.x = 0.;		bot.y = -radius;	bot.z = 0.;
+    bot.x =-radiusX;	bot.y = -radiusY;	bot.z = -radiusZ;//0.;
     bot.nx = 0.;		bot.ny = -1.;		bot.nz = 0.;
     bot.s = 0.;		bot.t = 0.;
 
 
     // connect the north pole to the latitude NumLats-2:
 
-    glBegin(GL_QUADS);
+    glBegin(GL_LINE_STRIP);
     for (int ilng = 0; ilng < NumLngs - 1; ilng++)
     {
         p = PtsPointer(NumLats - 1, ilng);
@@ -531,7 +531,7 @@ MjbSphere(float radius, int slices, int stacks)
 
     // connect the south pole to the latitude 1:
 
-    glBegin(GL_QUADS);
+    glBegin(GL_LINE_STRIP);
     for (int ilng = 0; ilng < NumLngs - 1; ilng++)
     {
         p = PtsPointer(0, ilng);
@@ -551,7 +551,7 @@ MjbSphere(float radius, int slices, int stacks)
 
     // connect the other 4-sided polygons:
 
-    glBegin(GL_QUADS);
+    glBegin(GL_LINE_STRIP);
     for (int ilat = 2; ilat < NumLats - 1; ilat++)
     {
         for (int ilng = 0; ilng < NumLngs - 1; ilng++)
