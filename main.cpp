@@ -1,7 +1,7 @@
 
 //#include "lighting.h"
-#include "main.h"
-#include "math.h"
+#include "src/main.h"
+#include "src/math.h"
 
 #define MS_PER_CYCLE 5000
 float Time; // = 1.0;
@@ -310,8 +310,8 @@ InitLists( )
 
     glutSetWindow(MainWindow);
     // create the object:
-    const char* filename = "/home/tadeze/projects/comgraph/Finalproject/multivariated.csv";
-    const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/multivariate.csv";
+    const char* filename = "/home/tadeze/projects/comgraph/Finalproject/data/multivariated.csv";
+    const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate.csv";
     std::vector<std::vector<double> > points = readcsv(filename);
     std::vector<double> mean = means(points);
     std::cout<<mean[0]<<mean[1];

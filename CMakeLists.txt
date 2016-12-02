@@ -20,7 +20,7 @@ endif(NOT OPENGL_FOUND)
 #########################################################
 # Include Files
 #########################################################
-add_executable(Project4 glut.h main.cpp lighting.cpp lighting.h main.h geometry.h math.h)
+add_executable(Project4 src/glut.h main.cpp src/lighting.cpp src/lighting.h src/main.h src/geometry.h src/math.h)
 
 ########################################################
 # Linking & stuff
