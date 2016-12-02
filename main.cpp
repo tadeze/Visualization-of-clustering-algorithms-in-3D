@@ -356,8 +356,10 @@ InitLists( )
     glColor4f(1.0,0.0,0.0,0.4);
     //gluLookAt(0,0,0.4,0,0,0,-0.5,0.2,0.3);
     MjbSphere(0.8,0.2,0.3,30,30);
+    glTranslatef(0.0,mean[1],mean[2]);
+    glColor4f(1.0,0.0,1.0,0.6);
+    MjbSphere(0.8,0.2,0.3,30,30);
 
-    //glutSolidSphere(0.3,50,50);
 
     glEndList();
 
