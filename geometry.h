@@ -21,8 +21,7 @@ struct Curve
     Point p0, p1, p2, p3;
 };
 
-Curve Curves[NUMCURVES];		// if you are creating a pattern of curves
-Curve Stem;
+
 void
 RotateX( Point *p, float deg, float xc, float yc, float zc )
 {
@@ -72,14 +71,5 @@ RotateZ( Point *p, float deg, float xc, float yc, float zc )
     p->z = zp + zc;
 }
 
-Point* readPoints(std::string fileName)
-{
-
-}
-
-void generatePoints(int N)
-{
-
-}
 
 #endif //PROJECT4_GEOMETRY_H
