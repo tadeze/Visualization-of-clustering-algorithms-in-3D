@@ -4,17 +4,20 @@
 
 #ifndef PROJECT4_MATH_H
 #define PROJECT4_MATH_H
+//#include "main.h"
+
 #include<fstream>
 #include<vector>
 #include<cstdlib>
 #include<fstream>
 #include<sstream>
+//#include "main.h"
 //#include "geometry.h"
-#include "main.h"
-#include<armadillo>
+
+using namespace std;
 
 //using namespace arma;
-using namespace std;
+
 
 vector<vector<double> > readcsv(const char* filename, char delim = ',',
                                 bool header = true) {
@@ -35,12 +38,27 @@ vector<vector<double> > readcsv(const char* filename, char delim = ',',
     }
     return values;
 }
-double mean(vector<double> &datapoints)
+
+vector<double> means(vector<vector<double> > points)
 {
-    return 1.0;
- // return arma::mean(datapoints.begin(),datapoints.end());
+double x=0.0,y=0.0,z=0.0;
+    vector<double> xyz;
+    int i=0;
+    for(i=0;i<points.size();i++)
+    {
+
+        x+=points[i][0];
+        y+=points[i][1];
+        z+=points[i][2];
+    }
+    xyz.push_back(x/i);
+    xyz.push_back(y/i);
+    xyz.push_back(z/i);
+    return xyz;
+
 }
 
+/*
 vector<point> readPoints(const char* filename, char delim=',',bool header=true){
     ifstream fin(filename);
     string item;
@@ -53,12 +71,12 @@ vector<point> readPoints(const char* filename, char delim=',',bool header=true){
         point instance;
         int i=0;
         while (getline(in, item, delim)) {
-          if(i==0)
-            instance.x = atof(item.c_str());
+            if(i==0)
+                instance.x = atof(item.c_str());
             else if(i==1)
-            instance.y = atof(item.c_str());
+                instance.y = atof(item.c_str());
             else
-            instance.z = atof(item.c_str());
+                instance.z = atof(item.c_str());
             i++;
             //valueline.push_back(atof(item.c_str()));
         }
@@ -68,6 +86,13 @@ vector<point> readPoints(const char* filename, char delim=',',bool header=true){
     }
     return values;
 }
+*/
+
+//std::vector<point> readPoints(const char* filename, char delim=',',bool header=true);
+
+
+
+
 
 
 #endif //PROJECT4_MATH_H

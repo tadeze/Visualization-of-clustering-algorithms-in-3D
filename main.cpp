@@ -1,6 +1,7 @@
+
+//#include "lighting.h"
 #include "main.h"
 #include "math.h"
-#include "lighting.h"
 
 #define MS_PER_CYCLE 5000
 float Time; // = 1.0;
@@ -94,6 +95,9 @@ Display( )
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glEnable( GL_DEPTH_TEST );
 
+    glEnable(GL_BLEND);
+    glDepthMask(GL_FALSE);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     //glEnable(GL_LIGHTING);
 
     // specify shading to be flat:
@@ -245,14 +249,18 @@ Display( )
     // draw the current object:
 
     glCallList( BoxList );
+    //gluLookAt(0,0,0.4,0.7,0.8,0,0.0,0.0,0.0);
+   // MjbSphere(0.8,0.2,0.3,30,30);
 
 
     // draw some gratuitous text that just rotates on top of the scene:
 //    glDisable(GL_LIGHTING);
+
     glDisable( GL_DEPTH_TEST );
     glColor3f( 0., 1., 1. );
     //DoRasterString( 0., 1., 0., "Text That Moves" );
-
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
 
     // draw some gratuitous text that is fixed on the screen:
     //
@@ -304,8 +312,10 @@ InitLists( )
     // create the object:
     const char* filename = "/home/tadeze/projects/comgraph/Finalproject/multivariated.csv";
     const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/multivariate.csv";
-    vector<vector<double> > points = readcsv(filename);
-    vector<point > pointx = readPoints(filename);
+    std::vector<std::vector<double> > points = readcsv(filename);
+    std::vector<double> mean = means(points);
+    std::cout<<mean[0]<<mean[1];
+   // std::vector<point > pointx = readPoints(filename);
     //std::cout<<points.size();
     //std::cout<<points.size();
 
@@ -313,24 +323,27 @@ InitLists( )
     glNewList(BoxList, GL_COMPILE);
 //    if (points.size() >50)
 
-    glColor3f(1.0,0.0,0.0);
-    MjbSphere(0.8,0.2,0.3,30,30);
-    glPushMatrix();
+    //glPushMatrix();
     glPointSize(3.0);
+
+    glBegin(GL_POINTS);
+    glColor4f(0.0, 0.0, 1.0,1.0);
+    glVertex3f(mean[0],mean[1],mean[2]);
+    glEnd();
 
 
     glBegin(GL_POINTS);
-    glColor3f(1.0, 1.0, 0.0);
+    glColor4f(1.0, 1.0, 0.0,1.0);
     for (int j = 0; j< points.size(); j++)
     {
-      //  vector<double> pp = points[j];
-      point px = pointx[j];
+        vector<double> pp = points[j];
+     // point px = pointx[j];
 
 
-       // glVertex3f(pp[0],pp[1],pp[2]);
+        glVertex3f(pp[0],pp[1],pp[2]);
        // glColor3f(1.0, 0.0, 0.0);
 
-        glVertex3f(px.x,px.y,px.y);
+       // glVertex3f(px.x,px.y,px.y);
         //glVertex3f(Curves[j].p1.x, Curves[j].p1.y, Curves[j].p1.z);
         //glVertex3f(Curves[j].p2.x, Curves[j].p2.y, Curves[j].p2.z);
         //glVertex3f(Curves[j].p3.x, Curves[j].p3.y, Curves[j].p3.z);
@@ -338,8 +351,13 @@ InitLists( )
     //MjbSphere(0.8,0.2,0.1,50,50);
 
     glEnd();
+   // glutSolidCube(0.4);
+    glTranslatef(mean[0],mean[1],mean[2]);
+    glColor4f(1.0,0.0,0.0,0.4);
+    //gluLookAt(0,0,0.4,0,0,0,-0.5,0.2,0.3);
+    MjbSphere(0.8,0.2,0.3,30,30);
 
-
+    //glutSolidSphere(0.3,50,50);
 
     glEndList();
 
