@@ -17,14 +17,16 @@ add_definitions(${OpenGL_DEFINITIONS})
 if(NOT OPENGL_FOUND)
     message(ERROR " OPENGL not found!")
 endif(NOT OPENGL_FOUND)
+find_package(Armadillo REQUIRED)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
 #########################################################
 # Include Files
 #########################################################
-add_executable(Project4 src/glut.h main.cpp src/lighting.cpp src/lighting.h src/main.h src/geometry.h src/math.h)
+add_executable(Project4 src/glut.h main.cpp src/lighting.cpp src/lighting.h src/main.h src/geometry.h src/math.h src/kmean.cpp src/kmean.h src/Cloud.cpp src/Cloud.h)
 
 ########################################################
 # Linking & stuff
 #########################################################
 
 # create the program "test"
-target_link_libraries(Project4 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(Project4 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${ARMADILLO_LIBRARIES})

@@ -2,7 +2,7 @@
 //#include "lighting.h"
 #include "src/main.h"
 #include "src/math.h"
-
+#include "src/kmean.h"
 #define MS_PER_CYCLE 5000
 float Time; // = 1.0;
 bool textIsPopu = false;
@@ -313,6 +313,10 @@ InitLists( )
     const char* filename = "/home/tadeze/projects/comgraph/Finalproject/data/multivariated.csv";
     const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate.csv";
     std::vector<std::vector<double> > points = readcsv(filename);
+    Kmean km;
+
+    std::vector<std::vector<int> > clusters = km.kmeans(points,5);
+
     std::vector<double> mean = means(points);
     std::cout<<mean[0]<<mean[1];
    // std::vector<point > pointx = readPoints(filename);
@@ -331,7 +335,19 @@ InitLists( )
     glVertex3f(mean[0],mean[1],mean[2]);
     glEnd();
 
-
+    //GLfloat colors[3] ={{1.0,0.0,0.0},{0.0,1.0,0.0},{0.0,0.0,1.0}};
+    glBegin(GL_POINTS);
+    for(int i=0;i<clusters.size();i++)
+    {
+        glColor3fv(&Colors[WhichColor][i]);
+        for(int j=0;j<clusters[i].size();j++)
+        {
+            glVertex3f(points[clusters[i][j]][0],points[clusters[i][j]][1],points[clusters[i][j]][2]);
+        }
+        //std::cout<<"Cluster end ..\n";
+    }
+    glEnd();
+/*
     glBegin(GL_POINTS);
     glColor4f(1.0, 1.0, 0.0,1.0);
     for (int j = 0; j< points.size(); j++)
@@ -350,15 +366,16 @@ InitLists( )
     }
     //MjbSphere(0.8,0.2,0.1,50,50);
 
-    glEnd();
+    glEnd();*/
+
    // glutSolidCube(0.4);
     glTranslatef(mean[0],mean[1],mean[2]);
     glColor4f(1.0,0.0,0.0,0.4);
     //gluLookAt(0,0,0.4,0,0,0,-0.5,0.2,0.3);
-    MjbSphere(0.8,0.2,0.3,30,30);
-    glTranslatef(0.0,mean[1],mean[2]);
-    glColor4f(1.0,0.0,1.0,0.6);
-    MjbSphere(0.8,0.2,0.3,30,30);
+    //MjbSphere(0.8,0.2,0.3,30,30);
+    //glTranslatef(0.0,mean[1],mean[2]);
+    //glColor4f(1.0,0.0,1.0,0.6);
+    //MjbSphere(0.8,0.2,0.3,30,30);
 
 
     glEndList();
@@ -374,45 +391,7 @@ InitLists( )
 }
 
 
-void drawPoints()
-{
-    // draw the 3-d data points. Read from file for generate from random-distribution.
 
-
-
-
-}
-
-void textureMapping()
-{
-
-
-    //unsigned char *BmpToTexture;
-//
-//    unsigned char *Texture;
-//    int width, height;
-//
-//   // Every three rotation change to second picture
-//    //float rotation_count = 360.*Time;
-//    Texture = BmpToTexture("/home/tadeze/projects/comgraph/Project4/worldtex.bmp", &width, &height);
-//    int level, ncomps, border;
-//    level = 0; border = 0; ncomps = 3;
-//    //glMatrixMode(GL_TEXTURE);
-//    //glLoadIdentity();
-//    //glRotatef(360.*Time, 0., 1., 0.);
-//    glTranslatef(-1.0,-1.0,0.0);
-//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-//    glTexImage2D(GL_TEXTURE_2D, level, ncomps, width, height, border, GL_RGB, GL_UNSIGNED_BYTE, Texture);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-//    MjbSphere(.6, 100, 100);
-int x=0;
-
-
-}
 
 // the keyboard callback:
 
@@ -444,7 +423,7 @@ Keyboard( unsigned char c, int x, int y )
         case 'C':
         case 'c':
             textIsPopu = !textIsPopu;
-            textureMapping();
+//            textureMapping();
             break;
         case '0':
             Light0On =!Light0On;
