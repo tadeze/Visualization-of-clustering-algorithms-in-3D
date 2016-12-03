@@ -11,14 +11,20 @@
 #include<cstdlib>
 #include<fstream>
 #include<sstream>
+#include<algorithm>
 //#include "main.h"
 //#include "geometry.h"
-
+#include "armadillo"
 using namespace std;
 
 //using namespace arma;
+/*
+double median(std::vector<double> &observation){
 
+    double meddd = std::sort(observation.begin(),observation.end());
+    return meddd;
 
+}*/
 vector<vector<double> > readcsv(const char* filename, char delim = ',',
                                 bool header = true) {
     vector < vector<double> > values;
@@ -57,6 +63,9 @@ double x=0.0,y=0.0,z=0.0;
     return xyz;
 
 }
+
+
+
 
 /*
 vector<point> readPoints(const char* filename, char delim=',',bool header=true){

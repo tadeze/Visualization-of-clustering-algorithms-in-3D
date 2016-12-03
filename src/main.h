@@ -111,10 +111,10 @@ enum Projections
 };
 
 // Distortion
-enum Distortion{
-    NOTEXTURE,
-    TEXTUREIMAGE,
-    DISTORTIONIMAGE
+enum Clustering{
+    NONCLUSTER,
+    KMEAN,
+    MCD
 };
 // which button:
 
@@ -202,7 +202,7 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
-int Distortion;
+int clusterdness;
 bool Frozen = false;
 bool Light0On,Light1On,Light2On;
 
@@ -237,7 +237,7 @@ void	Resize( int, int );
 void	Visibility( int );
 void	Axes( float );
 void	HsvRgb( float[3], float [3] );
-void textureMapping();
+void drawKmean();
 #pragma endregion func_prot
 // main program:
 //
@@ -601,7 +601,7 @@ DoColorMenu( int id )
 }
 void DoDistortionMenu(int id)
 {
-    Distortion = id;
+    clusterdness = id;
 
     glutSetWindow(MainWindow);
     glutPostRedisplay();
@@ -745,11 +745,9 @@ InitMenus( )
     glutAddMenuEntry( "Perspective",   PERSP );
 
     int distormenu = glutCreateMenu(DoDistortionMenu);
-    glutAddMenuEntry("BLOB", NOTEXTURE);
-    glutAddMenuEntry("Texture", TEXTUREIMAGE);
-    glutAddMenuEntry("Distortion Texture", DISTORTIONIMAGE);
-
-
+    glutAddMenuEntry("Unclustered", NONCLUSTER);
+    glutAddMenuEntry("Kmean", KMEAN);
+    glutAddMenuEntry("Robust MCD", MCD);
 
 
 
@@ -758,7 +756,7 @@ InitMenus( )
     glutAddSubMenu(   "Colors",        colormenu);
     glutAddSubMenu(   "Depth Cue",     depthcuemenu);
     glutAddSubMenu(  "Projection",    projmenu );
-    glutAddSubMenu("Distortion",	distormenu);
+    glutAddSubMenu("Clustering",	distormenu);
     glutAddMenuEntry( "Reset",         RESET );
     glutAddSubMenu(   "Debug",         debugmenu);
     glutAddMenuEntry( "Quit",          QUIT );

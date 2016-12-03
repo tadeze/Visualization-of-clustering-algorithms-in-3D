@@ -5,10 +5,16 @@
 #ifndef PROJECT4_KMEAN_H
 #define PROJECT4_KMEAN_H
 #include "Cloud.h"
+/*
+namespace {
+    arma::mat generateData(int N, int d ,int mu)
+    {
+        arma::mat dd(N,d,arma::fill::fill_randn(2,0));
 
+    }
+}
 
-
-
+*/
 
 class Kmean {
 std::vector<Cloud> clouds;

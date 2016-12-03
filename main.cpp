@@ -66,7 +66,7 @@ Animate( )
     ms %= MS_PER_CYCLE;
     Time = (float)ms / (float)MS_PER_CYCLE;		// [0.,1.)
     // force a call to Display( ) next time it is convenient:
-    spin = Time* 360;
+   // spin = Time* 360;
     glutSetWindow( MainWindow );
     glutPostRedisplay( );
 }
@@ -141,8 +141,8 @@ Display( )
 
     // rotate the scene:
 
-    glRotatef( (GLfloat)Yrot, 0., 1., 0. );
-    glRotatef( (GLfloat)Xrot, 1., 0., 0. );
+   glRotatef( (GLfloat)Yrot, 0., 1., 0. );
+   glRotatef( (GLfloat)Xrot, 1., 0., 0. );
 
 // Inset light source.
 
@@ -154,9 +154,9 @@ Display( )
     GLfloat Light2position[] = { 2.3, 1.5, 0 };
 */
     glPushMatrix ();
-    glRotated ((GLdouble) spin, 1.0, 0.0, 0.0);
+    //glRotated ((GLdouble) spin, 1.0, 0.0, 0.0);
 
-    glTranslated (0.0, 0.0, 1.5);
+   // glTranslated (0.0, 0.0, 1.5);
     // uniformly scale the scene:
 
     if( Scale < MINSCALE )
@@ -197,6 +197,8 @@ Display( )
 
     glEnable( GL_NORMALIZE );
 
+   // if(clusterdness==KMEAN)
+     //   drawKmean();
 
     // draw the current object:
 
@@ -252,6 +254,7 @@ Display( )
 // (a display list is a way to store opengl commands in
 //  memory so that they can be played back efficiently at a later time
 //  with a call to glCallList( )
+
 struct cloudpp{
     float x,y,z;
     float radiusX,radiusY,radiusZ;
@@ -260,6 +263,19 @@ float max(float a, float b)
 {
     return a>b?a:b;
 }
+float medianR(std::vector<double> &observations)
+{
+    float dist = 0.0;
+    std::vector<double> medd;
+    for(int i=0;i<observations.size();i++)
+    {
+        dist +=observations[i];
+    }
+
+    float mn = dist/(float)observations.size();
+return mn;
+}
+
 cloudpp radiusXYZ(std::vector<int> &cluster, std::vector<std::vector<double> > &points)
 {
     cloudpp cpp;
@@ -274,19 +290,84 @@ cloudpp radiusXYZ(std::vector<int> &cluster, std::vector<std::vector<double> > &
         z+=points[cluster[i]][2];
     }
     cpp.x = x/len; cpp.y = y/len;cpp.z = z/len;
-
+    vector<double> distX,distY,distZ;
     for(int i=0;i<len;i++)
     {
-        cpp.radiusX = max(cpp.radiusX,abs(points[cluster[i]][0]-cpp.x));
-        cpp.radiusY = max(cpp.radiusY,abs(points[cluster[i]][1]-cpp.y));
-        cpp.radiusZ = max(cpp.radiusZ,abs(points[cluster[i]][2]-cpp.z));
+        distX.push_back(points[cluster[i]][0]);//-cpp.x));
+        distY.push_back(points[cluster[i]][1]);//-cpp.y));
+        distZ.push_back(points[cluster[i]][2]);//-cpp.z));
+
+//        cpp.radiusX = cpp.radiusX + abs(points[cluster[i]][0]-cpp.x);
+//        cpp.radiusY = cpp.radiusY + abs(points[cluster[i]][1]-cpp.y);
+//        cpp.radiusZ = cpp.radiusZ + abs(points[cluster[i]][2]-cpp.z);
 
     }
 
-
-
+   cpp.radiusX = medianR(distX);
+   cpp.radiusY = medianR(distY);
+   cpp.radiusZ = medianR(distZ);
     return cpp;
 }
+
+
+
+void drawKmean()
+{
+    const char* filename = "/home/tadeze/projects/comgraph/Finalproject/data/multivariated.csv";
+//  const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate.csv";
+    std::vector<std::vector<double> > points = readcsv(filename);
+    Kmean km;
+
+    std::vector<std::vector<int> > clusters = km.kmeans(points,5);
+
+    std::vector<double> mean = means(points);
+    glPointSize(3.0);
+    glBegin(GL_POINTS);
+    glColor4f(0.0, 0.0, 1.0,1.0);
+    glVertex3f(mean[0],mean[1],mean[2]);
+    glEnd();
+    clusterdness=NONCLUSTER;
+  if(clusterdness==NONCLUSTER)
+  {
+      glColor4f(1.0, 0.0, 0.0,1.0);
+      std::vector<int> pointIndex;
+      glBegin(GL_POINTS);
+      for (int j = 0; j < points.size(); j++) {
+         glVertex3f(points[j][0], points[j][1], points[j][2]);
+          pointIndex.push_back(j);
+
+      }
+      glEnd();
+
+      glColor4f(1.0, 1.0, 0.0, 0.4);
+          cloudpp cloud = radiusXYZ(pointIndex, points);
+          glTranslatef(cloud.x, cloud.y, cloud.z);
+          MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
+
+
+
+  }
+  else {
+      for (int i = 0; i < clusters.size(); i++) {
+          glBegin(GL_POINTS);
+          glColor3fv(&Colors[WhichColor][i]);
+          glTranslatef(0.0, 0.0, 0.0);
+          for (int j = 0; j < clusters[i].size(); j++) {
+              glVertex3f(points[clusters[i][j]][0], points[clusters[i][j]][1], points[clusters[i][j]][2]);
+          }
+          glEnd();
+          glColor4f(.5, .9, 0.5, 0.4);
+          cloudpp cloud = radiusXYZ(clusters[i], points);
+          std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
+          glTranslatef(cloud.x, cloud.y, cloud.z);
+          MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
+      }
+
+  }
+
+
+}
+
 
 void
 InitLists( )
@@ -295,80 +376,13 @@ InitLists( )
 
     glutSetWindow(MainWindow);
     // create the object:
-    const char* filename = "/home/tadeze/projects/comgraph/Finalproject/data/multivariated.csv";
-    const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate.csv";
-    std::vector<std::vector<double> > points = readcsv(filename);
-    Kmean km;
-
-    std::vector<std::vector<int> > clusters = km.kmeans(points,5);
-
-    std::vector<double> mean = means(points);
-    std::cout<<mean[0]<<mean[1];
 
     BoxList = glGenLists(1);
     glNewList(BoxList, GL_COMPILE);
-    glPointSize(3.0);
-
-    glBegin(GL_POINTS);
-    glColor4f(0.0, 0.0, 1.0,1.0);
-    glVertex3f(mean[0],mean[1],mean[2]);
-    glEnd();
-
-    //GLfloat colors[3] ={{1.0,0.0,0.0},{0.0,1.0,0.0},{0.0,0.0,1.0}};
-
-    for(int i=0;i<clusters.size();i++)
-    {
-        glBegin(GL_POINTS);
-        glColor3fv(&Colors[WhichColor][i]);
-        for(int j=0;j<clusters[i].size();j++)
-        {
-            glVertex3f(points[clusters[i][j]][0],points[clusters[i][j]][1],points[clusters[i][j]][2]);
-        }
-        glEnd();
- // Cluster
-        cloudpp cloud = radiusXYZ(clusters[i],points);
-        std::cout<<cloud.radiusX<<"\t"<<cloud.radiusY<<"\t"<<cloud.radiusZ<<std::endl;
-        //std::cout<<"Cluster end ..\n";
-
-        glTranslatef(cloud.x,cloud.y,cloud.z);
-        glColor4f(1.0,1.0,0.0,0.4);
-        MjbSphere(cloud.radiusX,cloud.radiusY,cloud.radiusZ,30,30);
-
-    }
-
-/*
-    glBegin(GL_POINTS);
-    glColor4f(1.0, 1.0, 0.0,1.0);
-    for (int j = 0; j< points.size(); j++)
-    {
-        vector<double> pp = points[j];
-     // point px = pointx[j];
-
-
-        glVertex3f(pp[0],pp[1],pp[2]);
-       // glColor3f(1.0, 0.0, 0.0);
-
-       // glVertex3f(px.x,px.y,px.y);
-        //glVertex3f(Curves[j].p1.x, Curves[j].p1.y, Curves[j].p1.z);
-        //glVertex3f(Curves[j].p2.x, Curves[j].p2.y, Curves[j].p2.z);
-        //glVertex3f(Curves[j].p3.x, Curves[j].p3.y, Curves[j].p3.z);
-    }
-    //MjbSphere(0.8,0.2,0.1,50,50);
-
-    glEnd();*/
-
-   // glutSolidCube(0.4);
-   // glTranslatef(mean[0],mean[1],mean[2]);
-    //glColor4f(1.0,0.0,0.0,0.4);
-    //gluLookAt(0,0,0.4,0,0,0,-0.5,0.2,0.3);
-    //MjbSphere(0.8,0.2,0.3,30,30);
-    //glTranslatef(0.0,mean[1],mean[2]);
-    //glColor4f(1.0,0.0,1.0,0.6);
-    //MjbSphere(0.8,0.2,0.3,30,30);
-
+   // if(clusterdness==KMEAN)
+    drawKmean();
 
     glEndList();
-
     AxesList = glGenLists( 1 );
     glNewList( AxesList, GL_COMPILE );
     glLineWidth( AXES_WIDTH );
