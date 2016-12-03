@@ -241,6 +241,8 @@ void	Visibility( int );
 void	Axes( float );
 void	HsvRgb( float[3], float [3] );
 void drawKmean();
+
+int currentswitch=clusterdness;
 #pragma endregion func_prot
 // main program:
 //
@@ -605,7 +607,7 @@ DoColorMenu( int id )
 void DoDistortionMenu(int id)
 {
     clusterdness = id;
-
+    drawKmean();
     glutSetWindow(MainWindow);
     glutPostRedisplay();
 }

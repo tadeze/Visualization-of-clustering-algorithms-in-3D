@@ -200,8 +200,12 @@ Display( )
      //   drawKmean();
 
     // draw the current object:
-
+   if(clusterdness!=currentswitch)
+   {
+       drawKmean();
+   }
     glCallList( BoxList );
+
     //gluLookAt(0,0,0.4,0.7,0.8,0,0.0,0.0,0.0);
    // MjbSphere(0.8,0.2,0.3,30,30);
 
@@ -255,25 +259,26 @@ Display( )
 //  with a call to glCallList( )
 
 
-
 void drawKmean()
 {
-    const char* filename = "/home/tadeze/projects/comgraph/Finalproject/data/multivariated.csv";
+      const char* filename = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate_large.csv";
 //  const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate.csv";
     std::vector<std::vector<double> > points = readcsv(filename,',',true);
     Kmean km;
 
     std::vector<std::vector<int> > clusters = km.kmeans(points,5);
-
+    BoxList = glGenLists(1);
+    glNewList(BoxList, GL_COMPILE);
     std::vector<double> mean = means(points);
     glPointSize(3.0);
     glBegin(GL_POINTS);
     glColor4f(0.0, 0.0, 1.0,1.0);
     glVertex3f(mean[0],mean[1],mean[2]);
     glEnd();
-    clusterdness=MCD;
+    currentswitch=clusterdness;
   if(clusterdness==NONCLUSTER)
   {
+
       glColor4f(1.0, 0.0, 0.0,1.0);
       std::vector<int> pointIndex;
       glBegin(GL_POINTS);
@@ -296,16 +301,17 @@ void drawKmean()
       for (int i = 0; i < clusters.size(); i++) {
           glBegin(GL_POINTS);
           glColor3fv(&Colors[WhichColor][i]);
-          glTranslatef(0.0, 0.0, 0.0);
+
           for (int j = 0; j < clusters[i].size(); j++) {
               glVertex3f(points[clusters[i][j]][0], points[clusters[i][j]][1], points[clusters[i][j]][2]);
           }
           glEnd();
-          glColor4f(.5, .9, 0.5, 0.4);
+          glColor4f(0.9,0.9,0.1, 0.4);
           cloudpp cloud = radiusXYZ(clusters[i], points);
-          std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
+          //std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
           glTranslatef(cloud.x, cloud.y, cloud.z);
           MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
+          glTranslatef(-cloud.x, -cloud.y, -cloud.z);
       }
 
   }
@@ -330,7 +336,7 @@ void drawKmean()
 
 
   }
-
+glEndList();
 
 }
 
@@ -343,12 +349,11 @@ InitLists( )
     glutSetWindow(MainWindow);
     // create the object:
 
-    BoxList = glGenLists(1);
-    glNewList(BoxList, GL_COMPILE);
+
    // if(clusterdness==KMEAN)
     drawKmean();
 
-    glEndList();
+
     AxesList = glGenLists( 1 );
     glNewList( AxesList, GL_COMPILE );
     glLineWidth( AXES_WIDTH );
