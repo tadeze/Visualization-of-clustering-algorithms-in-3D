@@ -265,8 +265,11 @@ void drawKmean()
 //  const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate.csv";
     std::vector<std::vector<double> > points = readcsv(filename,',',true);
     Kmean km;
+    int k = 4;
+    std::vector<std::vector<int> > clusters = km.kmeans(points,k);
+    currentswitch=clusterdness;
+    rAvg distType=MAX;
 
-    std::vector<std::vector<int> > clusters = km.kmeans(points,5);
     BoxList = glGenLists(1);
     glNewList(BoxList, GL_COMPILE);
     std::vector<double> mean = means(points);
@@ -275,11 +278,11 @@ void drawKmean()
     glColor4f(0.0, 0.0, 1.0,1.0);
     glVertex3f(mean[0],mean[1],mean[2]);
     glEnd();
-    currentswitch=clusterdness;
+
   if(clusterdness==NONCLUSTER)
   {
 
-      glColor4f(1.0, 0.0, 0.0,1.0);
+      glColor4f(1.0, 1.0, 0.0,1.0);
       std::vector<int> pointIndex;
       glBegin(GL_POINTS);
       for (int j = 0; j < points.size(); j++) {
@@ -289,10 +292,10 @@ void drawKmean()
       }
       glEnd();
 
-      glColor4f(1.0, 1.0, 0.0, 0.4);
-          cloudpp cloud = radiusXYZ(pointIndex, points);
-          glTranslatef(cloud.x, cloud.y, cloud.z);
-          MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
+      glColor4f(.8, .4, .4, 0.4);
+      cloudpp cloud = radiusXYZ(pointIndex, points,distType);
+      glTranslatef(cloud.x, cloud.y, cloud.z);
+      MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
 
 
 
@@ -300,14 +303,15 @@ void drawKmean()
   else if(clusterdness==KMEAN) {
       for (int i = 0; i < clusters.size(); i++) {
           glBegin(GL_POINTS);
-          glColor3fv(&Colors[WhichColor][i]);
+          glColor3fv(Colors[i]);
 
           for (int j = 0; j < clusters[i].size(); j++) {
               glVertex3f(points[clusters[i][j]][0], points[clusters[i][j]][1], points[clusters[i][j]][2]);
           }
           glEnd();
-          glColor4f(0.9,0.9,0.1, 0.4);
-          cloudpp cloud = radiusXYZ(clusters[i], points);
+          glColor4fv(ColorsT[i]);
+          //glColor4f(0.9,0.9,0.1, 0.4);
+          cloudpp cloud = radiusXYZ(clusters[i], points,distType);
           //std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
           glTranslatef(cloud.x, cloud.y, cloud.z);
           MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);

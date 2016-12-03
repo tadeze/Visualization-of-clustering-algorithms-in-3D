@@ -52,26 +52,50 @@ std::vector<double> means(std::vector<std::vector<double> > points)
     return xyz;
 
 }
-
+template <typename T>
+T absolute(T value )
+{
+    return (T) value>0?value: -1*value;
+}
 
 float max(float a, float b)
 {
     return a>b?a:b;
 }
-float medianR(std::vector<double> &observations)
+
+float medianR(std::vector<double> &observations,rAvg ravg)
 {
     float dist = 0.0;
     std::vector<double> medd;
-    for(int i=0;i<observations.size();i++)
+    float mn;
+    int len = observations.size();
+    if (ravg==MEAN)
     {
-        dist +=observations[i];
-    }
+        for(int i=0;i<observations.size();i++)
+        {
+            dist +=observations[i];
+        }
 
-    float mn = dist/(float)observations.size();
-    return mn;
+         mn = dist/(float)observations.size();
+    }
+    else if(ravg==MAX){
+        for(int i=0;i<observations.size();i++)
+        {
+            dist =max(dist,observations[i]);
+        }
+    mn=dist;
+    }
+    else{ // for median
+        std::sort(observations.begin(),observations.end());
+
+        dist = len%2!=0?observations[(len-1)/2]:0.5*(observations[(len)/2] +observations[(len-2)/2]);
+        mn = dist;
+    }
+        return mn;
 }
 
-cloudpp radiusXYZ(std::vector<int> &cluster, std::vector<std::vector<double> > &points)
+cloudpp radiusXYZ(std::vector<int> &cluster, std::vector<std::vector<double> > &points,
+rAvg distType)
 {
     cloudpp cpp;
     float x=0.0,y=0.0,z=0.0;
@@ -85,21 +109,19 @@ cloudpp radiusXYZ(std::vector<int> &cluster, std::vector<std::vector<double> > &
         z+=points[cluster[i]][2];
     }
     cpp.x = x/len; cpp.y = y/len;cpp.z = z/len;
-    std::vector<double> distX,distY,distZ;
+
+    std::vector<double> distX(len),distY(len),distZ(len);
     for(int i=0;i<len;i++)
     {
-        distX.push_back(points[cluster[i]][0]);//-cpp.x));
-        distY.push_back(points[cluster[i]][1]);//-cpp.y));
-        distZ.push_back(points[cluster[i]][2]);//-cpp.z));
-
-//        cpp.radiusX = cpp.radiusX + abs(points[cluster[i]][0]-cpp.x);
-//        cpp.radiusY = cpp.radiusY + abs(points[cluster[i]][1]-cpp.y);
-//        cpp.radiusZ = cpp.radiusZ + abs(points[cluster[i]][2]-cpp.z);
-
+        //x = points[cluster[i]][0]-cpp.x;
+        //x = absolute(x);
+        distX[i]=(absolute(points[cluster[i]][0]-cpp.x));
+        distY[i]=(absolute(points[cluster[i]][1]-cpp.y));
+        distZ[i]=(absolute(points[cluster[i]][2]-cpp.z));
     }
 
-    cpp.radiusX = medianR(distX);
-    cpp.radiusY = medianR(distY);
-    cpp.radiusZ = medianR(distZ);
+    cpp.radiusX = medianR(distX,distType);
+    cpp.radiusY = medianR(distY,distType);
+    cpp.radiusZ = medianR(distZ,distType);
     return cpp;
 }

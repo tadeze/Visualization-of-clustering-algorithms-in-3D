@@ -181,7 +181,17 @@ const GLfloat Colors[ ][3] =
                 { 0., 0., 0. },		// black
         };
 
-
+const GLfloat ColorsT[ ][4] =
+        {
+                { 1., 0., 0.,0.4 },		// red
+                { 1., 1., 0.,0.4 },		// yellow
+                { 0., 1., 0. ,0.4},		// green
+                { 0., 1., 1.0,.4 },		// cyan
+                { 0., 0., 1.,0.4 },		// blue
+                { 1., 0., 1.,0.4 },		// magenta
+                { 1., 1., 1.,0.4 },		// white
+                { 0., 0., 0.,0.4 },		// black
+        };
 // fog parameters:
 
 const GLfloat FOGCOLOR[4] = { .0, .0, .0, 1. };

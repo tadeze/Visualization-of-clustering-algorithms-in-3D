@@ -13,6 +13,11 @@
 #include<sstream>
 #include<algorithm>
 #include "armadillo"
+enum rAvg{
+    MEAN,
+    MEDIAN,
+    MAX
+};
 
 struct cloudpp{
     float x,y,z;
@@ -28,6 +33,6 @@ std::vector<double> means(std::vector<std::vector<double> > points);
 float max(float a, float b);
 float medianR(std::vector<double> &observations);
 
-cloudpp radiusXYZ(std::vector<int> &cluster, std::vector<std::vector<double> > &points);
+cloudpp radiusXYZ(std::vector<int> &cluster, std::vector<std::vector<double> > &points,rAvg distType);
 
 #endif //PROJECT4_MATH_H
