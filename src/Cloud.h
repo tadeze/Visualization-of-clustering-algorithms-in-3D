@@ -14,6 +14,7 @@ public:
     std::vector<double> clusterRadius();
     std::vector<double> covariance();
 
+
     //Point mean(std::vector<Point> &points);
     //std::vector<double> radiusXYZ();
 };

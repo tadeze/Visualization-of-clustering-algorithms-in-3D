@@ -5,7 +5,6 @@
 #include "src/kmean.h"
 #define MS_PER_CYCLE 5000
 float Time; // = 1.0;
-bool textIsPopu = false;
 float spin=0;
 int
 main( int argc, char *argv[ ] )
@@ -158,53 +157,6 @@ Display( )
     glRotated ((GLdouble) spin, 1.0, 0.0, 0.0);
 
     glTranslated (0.0, 0.0, 1.5);
-//    glDisable (GL_LIGHTING);
-//    //glColor3f (1.0, 1.0, 1.0);
-//    glutSolidSphere(0.1,20,20);
-//    //glutWireCube (0.1);
-//    glEnable (GL_LIGHTING);
-//    SetPointLight(GL_LIGHT0,Light0position[0],Light0position[2],Light0position[2],1.,1.,1.);
-//    glPopMatrix ();
-//
-//    glPushMatrix ();
-//    glTranslated (Light1position[0],Light1position[2],Light1position[2]);
-//    glDisable (GL_LIGHTING);
-//    glColor3f (0.0, 0.0, 1.0);
-//    glutSolidSphere(0.1,20,20);
-//    //glutSolidCube(0.1);
-//    glEnable (GL_LIGHTING);
-//    SetSpotLight(GL_LIGHT1,Light1position[0],Light1position[2],Light1position[2],-1,-1,0,0.0,0.,1.0);
-//    glPopMatrix ();
-//
-//
-//    glPushMatrix ();
-//    glTranslated (Light2position[0],Light2position[2],Light2position[2]);
-//    glDisable (GL_LIGHTING);
-//    glColor3f (.9, 0.0, 0.0);
-//    glutSolidSphere(0.1,20,20);
-//    //glutWireCube (0.1);
-//    glEnable (GL_LIGHTING);
-//    SetPointLight(GL_LIGHT2,Light2position[0],Light2position[2],Light2position[2],0.9,0.,0.);
-//    glPopMatrix ();
-//
-//    if(!Light0On)
-//        glDisable(GL_LIGHT0);
-//    else
-//        glEnable(GL_LIGHT0);
-//
-//    if(!Light1On)
-//        glDisable(GL_LIGHT1);
-//    else
-//        glEnable(GL_LIGHT1);
-//    if(!Light2On)
-//        glDisable(GL_LIGHT2);
-//    else
-//        glEnable(GL_LIGHT2);
-//
-//
-//
-
-
     // uniformly scale the scene:
 
     if( Scale < MINSCALE )
@@ -300,8 +252,41 @@ Display( )
 // (a display list is a way to store opengl commands in
 //  memory so that they can be played back efficiently at a later time
 //  with a call to glCallList( )
+struct cloudpp{
+    float x,y,z;
+    float radiusX,radiusY,radiusZ;
+};
+float max(float a, float b)
+{
+    return a>b?a:b;
+}
+cloudpp radiusXYZ(std::vector<int> &cluster, std::vector<std::vector<double> > &points)
+{
+    cloudpp cpp;
+    float x=0.0,y=0.0,z=0.0;
+    cpp.radiusX=0;cpp.radiusY=0.0;cpp.radiusZ=0.0;
+    int len = cluster.size();
+
+    for(int i=0;i<len;i++)
+    {
+        x+=points[cluster[i]][0];
+        y+=points[cluster[i]][1];
+        z+=points[cluster[i]][2];
+    }
+    cpp.x = x/len; cpp.y = y/len;cpp.z = z/len;
+
+    for(int i=0;i<len;i++)
+    {
+        cpp.radiusX = max(cpp.radiusX,abs(points[cluster[i]][0]-cpp.x));
+        cpp.radiusY = max(cpp.radiusY,abs(points[cluster[i]][1]-cpp.y));
+        cpp.radiusZ = max(cpp.radiusZ,abs(points[cluster[i]][2]-cpp.z));
+
+    }
 
 
+
+    return cpp;
+}
 
 void
 InitLists( )
@@ -319,15 +304,9 @@ InitLists( )
 
     std::vector<double> mean = means(points);
     std::cout<<mean[0]<<mean[1];
-   // std::vector<point > pointx = readPoints(filename);
-    //std::cout<<points.size();
-    //std::cout<<points.size();
 
     BoxList = glGenLists(1);
     glNewList(BoxList, GL_COMPILE);
-//    if (points.size() >50)
-
-    //glPushMatrix();
     glPointSize(3.0);
 
     glBegin(GL_POINTS);
@@ -336,17 +315,27 @@ InitLists( )
     glEnd();
 
     //GLfloat colors[3] ={{1.0,0.0,0.0},{0.0,1.0,0.0},{0.0,0.0,1.0}};
-    glBegin(GL_POINTS);
+
     for(int i=0;i<clusters.size();i++)
     {
+        glBegin(GL_POINTS);
         glColor3fv(&Colors[WhichColor][i]);
         for(int j=0;j<clusters[i].size();j++)
         {
             glVertex3f(points[clusters[i][j]][0],points[clusters[i][j]][1],points[clusters[i][j]][2]);
         }
+        glEnd();
+ // Cluster
+        cloudpp cloud = radiusXYZ(clusters[i],points);
+        std::cout<<cloud.radiusX<<"\t"<<cloud.radiusY<<"\t"<<cloud.radiusZ<<std::endl;
         //std::cout<<"Cluster end ..\n";
+
+        glTranslatef(cloud.x,cloud.y,cloud.z);
+        glColor4f(1.0,1.0,0.0,0.4);
+        MjbSphere(cloud.radiusX,cloud.radiusY,cloud.radiusZ,30,30);
+
     }
-    glEnd();
+
 /*
     glBegin(GL_POINTS);
     glColor4f(1.0, 1.0, 0.0,1.0);
@@ -369,8 +358,8 @@ InitLists( )
     glEnd();*/
 
    // glutSolidCube(0.4);
-    glTranslatef(mean[0],mean[1],mean[2]);
-    glColor4f(1.0,0.0,0.0,0.4);
+   // glTranslatef(mean[0],mean[1],mean[2]);
+    //glColor4f(1.0,0.0,0.0,0.4);
     //gluLookAt(0,0,0.4,0,0,0,-0.5,0.2,0.3);
     //MjbSphere(0.8,0.2,0.3,30,30);
     //glTranslatef(0.0,mean[1],mean[2]);
@@ -420,21 +409,6 @@ Keyboard( unsigned char c, int x, int y )
             else
                 glutIdleFunc(Animate);
             break;
-        case 'C':
-        case 'c':
-            textIsPopu = !textIsPopu;
-//            textureMapping();
-            break;
-        case '0':
-            Light0On =!Light0On;
-            break;
-        case '1':
-            Light1On =!Light1On;
-            break;
-        case '2':
-            Light2On =!Light2On;
-            break;
-
         case 'q':
         case 'Q':
         case ESCAPE:
@@ -551,7 +525,6 @@ Reset( )
     Xrot = Yrot = 0.;
     Frozen = false;
     Distort = false;
-    textIsPopu = false;
 
 }
 
