@@ -22,7 +22,7 @@ include_directories(${ARMADILLO_INCLUDE_DIRS})
 #########################################################
 # Include Files
 #########################################################
-add_executable(Project4 src/glut.h main.cpp src/lighting.cpp src/lighting.h src/main.h src/geometry.h src/math.h src/kmean.cpp src/kmean.h src/Cloud.cpp src/Cloud.h)
+add_executable(Project4 src/glut.h main.cpp src/tools.cpp src/tools.h src/main.h src/kmean.cpp src/kmean.h src/Cloud.cpp src/Cloud.h src/RGM.cpp src/RGM.h)
 
 ########################################################
 # Linking & stuff

@@ -15,7 +15,6 @@ Code is in the textureMapping function.
 #include <ctype.h>
 #include<iostream>
 #define _USE_MATH_DEFINES
-#include <math.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -26,6 +25,10 @@ Code is in the textureMapping function.
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "glut.h"
+
+#include "tools.h"
+#include "kmean.h"
+#include "RGM.h"
 //#include "bmptotexture.cpp"
 #pragma endregion headers
 

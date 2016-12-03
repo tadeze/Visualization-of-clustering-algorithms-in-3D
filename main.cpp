@@ -1,8 +1,7 @@
 
 //#include "lighting.h"
 #include "src/main.h"
-#include "src/math.h"
-#include "src/kmean.h"
+
 #define MS_PER_CYCLE 5000
 float Time; // = 1.0;
 float spin=0;
@@ -255,67 +254,13 @@ Display( )
 //  memory so that they can be played back efficiently at a later time
 //  with a call to glCallList( )
 
-struct cloudpp{
-    float x,y,z;
-    float radiusX,radiusY,radiusZ;
-};
-float max(float a, float b)
-{
-    return a>b?a:b;
-}
-float medianR(std::vector<double> &observations)
-{
-    float dist = 0.0;
-    std::vector<double> medd;
-    for(int i=0;i<observations.size();i++)
-    {
-        dist +=observations[i];
-    }
-
-    float mn = dist/(float)observations.size();
-return mn;
-}
-
-cloudpp radiusXYZ(std::vector<int> &cluster, std::vector<std::vector<double> > &points)
-{
-    cloudpp cpp;
-    float x=0.0,y=0.0,z=0.0;
-    cpp.radiusX=0;cpp.radiusY=0.0;cpp.radiusZ=0.0;
-    int len = cluster.size();
-
-    for(int i=0;i<len;i++)
-    {
-        x+=points[cluster[i]][0];
-        y+=points[cluster[i]][1];
-        z+=points[cluster[i]][2];
-    }
-    cpp.x = x/len; cpp.y = y/len;cpp.z = z/len;
-    vector<double> distX,distY,distZ;
-    for(int i=0;i<len;i++)
-    {
-        distX.push_back(points[cluster[i]][0]);//-cpp.x));
-        distY.push_back(points[cluster[i]][1]);//-cpp.y));
-        distZ.push_back(points[cluster[i]][2]);//-cpp.z));
-
-//        cpp.radiusX = cpp.radiusX + abs(points[cluster[i]][0]-cpp.x);
-//        cpp.radiusY = cpp.radiusY + abs(points[cluster[i]][1]-cpp.y);
-//        cpp.radiusZ = cpp.radiusZ + abs(points[cluster[i]][2]-cpp.z);
-
-    }
-
-   cpp.radiusX = medianR(distX);
-   cpp.radiusY = medianR(distY);
-   cpp.radiusZ = medianR(distZ);
-    return cpp;
-}
-
 
 
 void drawKmean()
 {
     const char* filename = "/home/tadeze/projects/comgraph/Finalproject/data/multivariated.csv";
 //  const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate.csv";
-    std::vector<std::vector<double> > points = readcsv(filename);
+    std::vector<std::vector<double> > points = readcsv(filename,',',true);
     Kmean km;
 
     std::vector<std::vector<int> > clusters = km.kmeans(points,5);
@@ -326,7 +271,7 @@ void drawKmean()
     glColor4f(0.0, 0.0, 1.0,1.0);
     glVertex3f(mean[0],mean[1],mean[2]);
     glEnd();
-    clusterdness=NONCLUSTER;
+    clusterdness=MCD;
   if(clusterdness==NONCLUSTER)
   {
       glColor4f(1.0, 0.0, 0.0,1.0);
@@ -347,7 +292,7 @@ void drawKmean()
 
 
   }
-  else {
+  else if(clusterdness==KMEAN) {
       for (int i = 0; i < clusters.size(); i++) {
           glBegin(GL_POINTS);
           glColor3fv(&Colors[WhichColor][i]);
@@ -362,6 +307,27 @@ void drawKmean()
           glTranslatef(cloud.x, cloud.y, cloud.z);
           MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
       }
+
+  }
+    else{
+      // Put code for the guassian code.
+      RGM rgm(points);
+      cloudpp cloud= rgm.radiusXYZ();
+      std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
+
+      glColor4f(1.0, 0.0, 0.0,1.0);
+      std::vector<int> pointIndex;
+      glBegin(GL_POINTS);
+      for (int j = 0; j < points.size(); j++) {
+          glVertex3f(points[j][0], points[j][1], points[j][2]);
+          pointIndex.push_back(j);
+      }
+      glEnd();
+      glColor4f(1.0, 1.0, 0.0, 0.4);
+      glTranslatef(cloud.x, cloud.y, cloud.z);
+      MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
+
+
 
   }
 
