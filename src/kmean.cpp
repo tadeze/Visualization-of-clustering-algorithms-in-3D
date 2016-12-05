@@ -51,7 +51,7 @@ double Kmean::nearestCenter(std::vector<arma::rowvec>& centroids, arma::rowvec p
 
 }
 
-std::vector<std::vector<int> > Kmean::kmeans(std::vector<std::vector<double> >&input_vectors, int K){
+std::vector<std::vector<std::vector<int> > > Kmean::kmeans(std::vector<std::vector<double> >&input_vectors, int K){
 
     arma::mat data = vec2mat(input_vectors);
     int nSamples = data.n_rows;
@@ -62,6 +62,8 @@ std::vector<std::vector<int> > Kmean::kmeans(std::vector<std::vector<double> >&i
         int rand_int = rand() % nSamples;
         centroids.push_back(data.row(rand_int));
     }
+
+    std::vector<std::vector<std::vector<int> > > clusterCollection;
 
     //iteratively find better centroids
     std::vector<std::vector<int> > cluster;
@@ -95,9 +97,10 @@ std::vector<std::vector<int> > Kmean::kmeans(std::vector<std::vector<double> >&i
         }
         if(converge) break;
         ++counter;
+        clusterCollection.push_back(cluster);
         //std::cout<<counter<<std::endl;
     }
-    return cluster;
+    return clusterCollection;
   //double dist = distortion(data, cluster, centroids);
 
     //return dist;

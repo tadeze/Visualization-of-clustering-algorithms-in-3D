@@ -4,7 +4,8 @@
 
 #define MS_PER_CYCLE 5000
 float Time; // = 1.0;
-float spin=0;
+int spin=0;
+int clusterCollectionSize=0;
 int
 main( int argc, char *argv[ ] )
 {
@@ -65,7 +66,7 @@ Animate( )
     ms %= MS_PER_CYCLE;
     Time = (float)ms / (float)MS_PER_CYCLE;		// [0.,1.)
     // force a call to Display( ) next time it is convenient:
-   // spin = Time* 360;
+    spin = spin+5;// = Time ; //* 360;
     glutSetWindow( MainWindow );
     glutPostRedisplay( );
 }
@@ -204,6 +205,10 @@ Display( )
    {
        drawKmean();
    }
+    if(spin>0)
+    {
+        drawKmean();
+    }
     glCallList( BoxList );
 
     //gluLookAt(0,0,0.4,0.7,0.8,0,0.0,0.0,0.0);
@@ -264,11 +269,10 @@ void drawKmean()
       const char* filename = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate_large.csv";
 //  const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate.csv";
     std::vector<std::vector<double> > points = readcsv(filename,',',true);
-    Kmean km;
-    int k = 4;
-    std::vector<std::vector<int> > clusters = km.kmeans(points,k);
+
     currentswitch=clusterdness;
     rAvg distType=MAX;
+    int k = 4;
 
     BoxList = glGenLists(1);
     glNewList(BoxList, GL_COMPILE);
@@ -301,22 +305,38 @@ void drawKmean()
 
   }
   else if(clusterdness==KMEAN) {
-      for (int i = 0; i < clusters.size(); i++) {
-          glBegin(GL_POINTS);
-          glColor3fv(Colors[i]);
 
-          for (int j = 0; j < clusters[i].size(); j++) {
-              glVertex3f(points[clusters[i][j]][0], points[clusters[i][j]][1], points[clusters[i][j]][2]);
-          }
-          glEnd();
-          glColor4fv(ColorsT[i]);
-          //glColor4f(0.9,0.9,0.1, 0.4);
-          cloudpp cloud = radiusXYZ(clusters[i], points,distType);
-          //std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
-          glTranslatef(cloud.x, cloud.y, cloud.z);
-          MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
-          glTranslatef(-cloud.x, -cloud.y, -cloud.z);
-      }
+      Kmean km;
+
+      std::vector<std::vector<std::vector<int> > > clusterCollection = km.kmeans(points,k);
+
+      clusterCollectionSize = clusterCollection.size();
+      std::cout<<clusterCollectionSize<<" Size of the collection \n";
+       if(spin>=clusterCollection.size()) {
+           spin = clusterCollectionSize - 1;
+           glutIdleFunc(Animate);
+       }
+      std::cout<<"Spin value "<<spin<<std::endl;
+         std::vector<std::vector<int> > clusters = clusterCollection[spin];
+         for (int i = 0; i < clusters.size(); i++) {
+
+            glBegin(GL_POINTS);
+             glColor3fv(Colors[i]);
+
+             for (int j = 0; j < clusters[i].size(); j++) {
+                 glVertex3f(points[clusters[i][j]][0], points[clusters[i][j]][1], points[clusters[i][j]][2]);
+             }
+             glEnd();
+
+             glColor4fv(ColorsT[i]);
+             //glColor4f(0.9,0.9,0.1, 0.4);
+             cloudpp cloud = radiusXYZ(clusters[i], points, distType);
+             //std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
+             glTranslatef(cloud.x, cloud.y, cloud.z);
+             MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
+             glTranslatef(-cloud.x, -cloud.y, -cloud.z);
+         }
+
 
   }
     else{
@@ -505,7 +525,7 @@ void
 Reset( )
 {
     ActiveButton = 0;
-    AxesOn = 0;
+    AxesOn = 1;
     DebugOn = 0;
     DepthCueOn = 0;
     Scale  = 1.0;

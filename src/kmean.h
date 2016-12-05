@@ -24,7 +24,7 @@ public:
     arma::mat vec2mat(std::vector<std::vector<double> >&vec);
     double getDistance(arma::rowvec a, arma::rowvec b);
     double nearestCenter(std::vector<arma::rowvec>& centroids, arma::rowvec pt);
-    std::vector<std::vector<int> > kmeans(std::vector<std::vector<double> > &input_vectors, int K);
+    std::vector<std::vector<std::vector<int> > > kmeans(std::vector<std::vector<double> > &input_vectors, int K);
    // void kmeanC(std::vector<std::vector<double> >&input_vectors, int K);
     double distortion(arma::mat data, std::vector<std::vector<int> >& cluster, std::vector<arma::rowvec>& centroids);
 
