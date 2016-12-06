@@ -25,17 +25,27 @@ arma::mat RGM::covariance() {
     return cov;
 
 }
+cloudpp RGM::singleRadiusXYZ() {
+    arma::mat cov = covariance();
+    arma::mat mn = arma::mean(data);
+    return radiusXYZ(cov,mn);
+}
 
-cloudpp RGM::radiusXYZ() {
+
+cloudpp RGM::radiusXYZ(arma::mat cov,arma::mat mn) {
     cloudpp cldpp;
-    arma::vec eigenV = getEigenValues(covariance());
+    arma::vec eigenV = getEigenValues(cov);
     float chisqr =2.4477; //95% percentage
-     arma::mat mn = arma::mean(data);
     cldpp.x = (float)mn[0];cldpp.y = (float)mn[1];cldpp.z= (float)mn[2];
     //Calculate the size of the minor and major axes
     cldpp.radiusX=(float)chisqr*sqrt(eigenV[0]);
     cldpp.radiusY=(float)chisqr*sqrt(eigenV[1]);
     cldpp.radiusZ=(float)chisqr*sqrt(eigenV[2]);
     return cldpp;
+
+}
+std::vector<cloudpp> RGM::gmmRadiusXYZ(int k){ //Mixture of guassian distribution.
+std::vector<cloudpp> cloudppCollection;
+
 
 }

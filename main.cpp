@@ -406,7 +406,7 @@ void drawKmean()
     else{
       // Put code for the guassian code.
       RGM rgm(points);
-      cloudpp cloud= rgm.radiusXYZ();
+      cloudpp cloud= rgm.singleRadiusXYZ();
       std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
 
       glColor4f(1.0, 0.0, 0.0,1.0);

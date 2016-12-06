@@ -19,10 +19,11 @@ public:
     }
     arma::mat vec2mat(std::vector<std::vector<double> >&vec);
     arma::vec getEigenValues(arma::mat M);
-    cloudpp radiusXYZ();
+    cloudpp radiusXYZ(arma::mat covariance,arma::mat mean);
     virtual ~RGM(){};
     arma::mat covariance();
-
+    cloudpp singleRadiusXYZ();
+    std::vector<cloudpp> gmmRadiusXYZ(int k);
 
 };
 
