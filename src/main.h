@@ -117,7 +117,8 @@ enum Projections
 enum Clustering{
     NONCLUSTER,
     KMEAN,
-    MCD
+    MCD,
+    GMM
 };
 // which button:
 
@@ -762,7 +763,8 @@ InitMenus( )
     int distormenu = glutCreateMenu(DoDistortionMenu);
     glutAddMenuEntry("Unclustered", NONCLUSTER);
     glutAddMenuEntry("Kmean", KMEAN);
-    glutAddMenuEntry("Robust MCD", MCD);
+    glutAddMenuEntry("Multivariate Gaussian", MCD);
+    glutAddMenuEntry("Mixture of Guassian", GMM);
 
 
 

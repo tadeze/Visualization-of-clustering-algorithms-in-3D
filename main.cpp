@@ -403,25 +403,44 @@ void drawKmean()
 
 
   }
+
+
     else{
       // Put code for the guassian code.
       RGM rgm(points);
-      cloudpp cloud= rgm.singleRadiusXYZ();
-      std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
 
-      glColor4f(1.0, 0.0, 0.0,1.0);
-      std::vector<int> pointIndex;
+      //std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
+
+      glColor4f(1.0, 1.0, 0.0,1.0);
       glBegin(GL_POINTS);
       for (int j = 0; j < points.size(); j++) {
           glVertex3f(points[j][0], points[j][1], points[j][2]);
-          pointIndex.push_back(j);
       }
       glEnd();
-      glColor4f(1.0, 1.0, 0.0, 0.4);
-      glTranslatef(cloud.x, cloud.y, cloud.z);
-      MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
+     if(clusterdness==GMM)
+     {
+         std::vector<cloudpp> cc = rgm.gmmRadiusXYZ(k);
+         for (cloudpp cloud : cc)
+         {
+             glColor4f(.8, .1, 1.0, 0.4);
+             glTranslatef(cloud.x, cloud.y, cloud.z);
+             MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
+             glTranslatef(-cloud.x, -cloud.y, -cloud.z);
+
+         }
+     }
+     else
+     {
+        //For single guassian model
+         cloudpp cloud = rgm.singleRadiusXYZ();
+         glColor4f(.8, .1, 1.0, 0.4);
+         glTranslatef(cloud.x, cloud.y, cloud.z);
+         MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
+         glTranslatef(-cloud.x, -cloud.y, -cloud.z);
 
 
+
+     }
 
   }
 glEndList();

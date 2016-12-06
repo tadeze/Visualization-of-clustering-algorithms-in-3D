@@ -47,5 +47,29 @@ cloudpp RGM::radiusXYZ(arma::mat cov,arma::mat mn) {
 std::vector<cloudpp> RGM::gmmRadiusXYZ(int k){ //Mixture of guassian distribution.
 std::vector<cloudpp> cloudppCollection;
 
+    arma::gmm_diag model;
+    arma::mat dataT = data.t();
+    bool status = model.learn(dataT, k, arma::maha_dist, arma::random_subset, 10, 5, 1e-10, false);
+    if(status == false)
+    {
+        std::cout << "learning failed" << std::endl;
+    }
+    // Extract covariance and mean vector the guassian models.
+    int dim = model.dcovs.n_rows;
+
+    for(int l=0;l<k;l++) {
+
+        arma::vec covariances = model.dcovs.col(l);
+        arma::mat cv = arma::eye(dim, dim);
+
+        for (int i = 0; i < dim; i++) {
+            cv(i, i) = covariances(i);
+        }
+        arma::mat mean = model.means.col(l);
+        cloudppCollection.push_back(radiusXYZ(cv,mean));
+
+    }
+
+    return cloudppCollection;
 
 }
