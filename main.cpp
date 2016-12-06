@@ -1,20 +1,81 @@
 
 //#include "lighting.h"
 #include "src/main.h"
-
-#define MS_PER_CYCLE 5000
+#include "src/parser.hh"
+#define MS_PER_CYCLE 1000
 float Time; // = 1.0;
 int spin=0;
 int clusterCollectionSize=0;
+int k;
+std::string strFileName;
+
+void parseArgument(int argc,char  *argv[])
+
+{
+
+    optionparser::parser p("Anomaly detection and clustering algorithm visualization tool");
+
+    p.add_option("-knn", "-k").help("Number of cluster for K-mean")
+            .mode(optionparser::store_value)
+            .default_value(3);
+            //.m_default_value("4");
+
+
+    p.add_option("-gmm","-g").help("Number of cluster of GMM.")
+            .mode(optionparser::store_mult_values)
+            .required(false)
+            .default_value("3");
+
+    p.add_option("-input", "-i") .help("Input data.")
+            .mode(optionparser::store_value)
+                    // .required(true)
+            .default_value("multivariated.txt");
+
+    p.eat_arguments(argc, argv);
+
+
+    if (p.get_value("input"))
+    {
+        auto names = p.get_value<std::string>("input");
+
+        strFileName = names;
+        std::cout<<strFileName<<" File name"<<std::endl;
+
+        /*for (int i = 0; i < names.size(); ++i)
+        {
+            std::cout << "element " << i << ": " << names[i] << std::endl;
+        }*/
+
+    }
+
+    if (p.get_value("gmm"))
+    {
+        auto names = p.get_value<int>("gmm");
+
+        std::cout << "Gmm value" <<names<<std::endl;
+
+    }
+
+    if (p.get_value("knn"))
+    {
+         auto names = p.get_value<int>("knn");
+        k = names;
+        std::cout << "K value" <<names<<std::endl;
+
+    }
+   // std::cout<<argv[0]<<argv[1];
+    //k =5; atoi(argv[1]);
+
+}
 int
-main( int argc, char *argv[ ] )
+main( int argc, char  *argv[ ] )
 {
     // turn on the glut package:
     // (do this before checking argc and argv since it might
     // pull some command line arguments out)
 
+    parseArgument(argc,argv);
     glutInit( &argc, argv );
-
 
     // setup all the graphics stuff:
 
@@ -66,7 +127,7 @@ Animate( )
     ms %= MS_PER_CYCLE;
     Time = (float)ms / (float)MS_PER_CYCLE;		// [0.,1.)
     // force a call to Display( ) next time it is convenient:
-    spin = spin+5;// = Time ; //* 360;
+    spin = spin+1;// = Time ; //* 360;
     glutSetWindow( MainWindow );
     glutPostRedisplay( );
 }
@@ -262,18 +323,19 @@ Display( )
 // (a display list is a way to store opengl commands in
 //  memory so that they can be played back efficiently at a later time
 //  with a call to glCallList( )
-
+std::vector<std::vector<std::vector<int> > > clusterCollection;
 
 void drawKmean()
 {
-      const char* filename = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate_large.csv";
+      const char* filename = strFileName.c_str(); //"/home/tadeze/projects/comgraph/Finalproject/data/multivariate_large.csv";
 //  const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate.csv";
     std::vector<std::vector<double> > points = readcsv(filename,',',true);
 
     currentswitch=clusterdness;
     rAvg distType=MAX;
-    int k = 4;
-
+    //int k = 4;
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clean the screen and the depth buffer
+    //glLoadIdentity();
     BoxList = glGenLists(1);
     glNewList(BoxList, GL_COMPILE);
     std::vector<double> mean = means(points);
@@ -306,16 +368,18 @@ void drawKmean()
   }
   else if(clusterdness==KMEAN) {
 
-      Kmean km;
-
-      std::vector<std::vector<std::vector<int> > > clusterCollection = km.kmeans(points,k);
-
+      if(spin==0) {
+        Kmean km;
+         clusterCollection = km.kmeans(points, k);
+}
       clusterCollectionSize = clusterCollection.size();
-      std::cout<<clusterCollectionSize<<" Size of the collection \n";
-       if(spin>=clusterCollection.size()) {
+
+       if(spin>=clusterCollection.size()-1) {
            spin = clusterCollectionSize - 1;
            glutIdleFunc(Animate);
        }
+
+      std::cout<<clusterCollectionSize<<" Size of the collection \n";
       std::cout<<"Spin value "<<spin<<std::endl;
          std::vector<std::vector<int> > clusters = clusterCollection[spin];
          for (int i = 0; i < clusters.size(); i++) {

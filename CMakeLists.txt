@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 project(Project4)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O2")
 find_package(GLUT REQUIRED)
 include_directories(${GLUT_INCLUDE_DIRS})
 link_directories(${GLUT_LIBRARY_DIRS})
@@ -22,7 +23,7 @@ include_directories(${ARMADILLO_INCLUDE_DIRS})
 #########################################################
 # Include Files
 #########################################################
-add_executable(Project4 src/glut.h main.cpp src/tools.cpp src/tools.h src/main.h src/kmean.cpp src/kmean.h src/Cloud.cpp src/Cloud.h src/RGM.cpp src/RGM.h)
+add_executable(Project4 src/parser.hh src/glut.h main.cpp src/tools.cpp src/tools.h src/main.h src/kmean.cpp src/kmean.h src/Cloud.cpp src/Cloud.h src/RGM.cpp src/RGM.h)
 
 ########################################################
 # Linking & stuff
