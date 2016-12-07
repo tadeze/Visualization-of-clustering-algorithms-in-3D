@@ -92,7 +92,7 @@ std::vector<std::vector<std::vector<int> > > Kmean::kmeans(std::vector<std::vect
             for(int i = 0; i < cluster_size; i++){
                 vectemp = vectemp + data.row(cluster[k][i]) / (double)cluster_size;
             }
-            if(getDistance(centroids[k], vectemp) >= 1e-6) converge = false;
+            if(getDistance(centroids[k], vectemp) >= 1e-8) converge = false;
             centroids[k] = vectemp;
         }
         if(converge) break;

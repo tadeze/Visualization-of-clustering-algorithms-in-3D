@@ -2,12 +2,14 @@
 //#include "lighting.h"
 #include "src/main.h"
 #include "src/parser.hh"
-#define MS_PER_CYCLE 1000
+#define MS_PER_CYCLE 7000
 float Time; // = 1.0;
-int spin=0;
-int clusterCollectionSize=0;
+int clusterIndex=0;
+int clusterCollectionSize;
 int k;
+int gComponent;
 std::string strFileName;
+#define pointSize 3.0
 
 void parseArgument(int argc,char  *argv[])
 
@@ -15,7 +17,7 @@ void parseArgument(int argc,char  *argv[])
 
     optionparser::parser p("Anomaly detection and clustering algorithm visualization tool");
 
-    p.add_option("-knn", "-k").help("Number of cluster for K-mean")
+    p.add_option("-knn", "-k").help("Number of cluster for K-mean algorithm")
             .mode(optionparser::store_value)
             .default_value(3);
             //.m_default_value("4");
@@ -24,7 +26,7 @@ void parseArgument(int argc,char  *argv[])
     p.add_option("-gmm","-g").help("Number of cluster of GMM.")
             .mode(optionparser::store_mult_values)
             .required(false)
-            .default_value("3");
+            .default_value(3);
 
     p.add_option("-input", "-i") .help("Input data.")
             .mode(optionparser::store_value)
@@ -39,32 +41,20 @@ void parseArgument(int argc,char  *argv[])
         auto names = p.get_value<std::string>("input");
 
         strFileName = names;
-        std::cout<<strFileName<<" File name"<<std::endl;
-
-        /*for (int i = 0; i < names.size(); ++i)
-        {
-            std::cout << "element " << i << ": " << names[i] << std::endl;
-        }*/
-
     }
 
     if (p.get_value("gmm"))
     {
         auto names = p.get_value<int>("gmm");
-
-        std::cout << "Gmm value" <<names<<std::endl;
-
+        gComponent = names;
     }
 
     if (p.get_value("knn"))
     {
          auto names = p.get_value<int>("knn");
         k = names;
-        std::cout << "K value" <<names<<std::endl;
 
     }
-   // std::cout<<argv[0]<<argv[1];
-    //k =5; atoi(argv[1]);
 
 }
 int
@@ -127,7 +117,7 @@ Animate( )
     ms %= MS_PER_CYCLE;
     Time = (float)ms / (float)MS_PER_CYCLE;		// [0.,1.)
     // force a call to Display( ) next time it is convenient:
-    spin = spin+1;// = Time ; //* 360;
+    clusterIndex = clusterIndex+2;// = Time ; //* 360;
     glutSetWindow( MainWindow );
     glutPostRedisplay( );
 }
@@ -215,7 +205,7 @@ Display( )
     GLfloat Light2position[] = { 2.3, 1.5, 0 };
 */
     glPushMatrix ();
-    //glRotated ((GLdouble) spin, 1.0, 0.0, 0.0);
+    //glRotated ((GLdouble) clusterIndex, 1.0, 0.0, 0.0);
 
    // glTranslated (0.0, 0.0, 1.5);
     // uniformly scale the scene:
@@ -266,7 +256,7 @@ Display( )
    {
        drawKmean();
    }
-    if(spin>0)
+    if(clusterIndex>0 && clusterIndex<clusterCollectionSize-1)
     {
         drawKmean();
     }
@@ -323,32 +313,35 @@ Display( )
 // (a display list is a way to store opengl commands in
 //  memory so that they can be played back efficiently at a later time
 //  with a call to glCallList( )
-std::vector<std::vector<std::vector<int> > > clusterCollection;
+
+std::vector<std::vector<std::vector<int> > > clusterCollection; // cluster of k-mean.
 
 void drawKmean()
 {
-      const char* filename = strFileName.c_str(); //"/home/tadeze/projects/comgraph/Finalproject/data/multivariate_large.csv";
-//  const char* filenams = "/home/tadeze/projects/comgraph/Finalproject/data/multivariate.csv";
+       currentswitch=clusterdness;
+    
+    //Read data source
+    const char* filename = strFileName.c_str();
     std::vector<std::vector<double> > points = readcsv(filename,',',true);
+    rAvg distType=MAX; //Cluster formuation metric, encolse maximum radius.
 
-    currentswitch=clusterdness;
-    rAvg distType=MAX;
-    //int k = 4;
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clean the screen and the depth buffer
-    //glLoadIdentity();
     BoxList = glGenLists(1);
     glNewList(BoxList, GL_COMPILE);
-    std::vector<double> mean = means(points);
-    glPointSize(3.0);
-    glBegin(GL_POINTS);
-    glColor4f(0.0, 0.0, 1.0,1.0);
-    glVertex3f(mean[0],mean[1],mean[2]);
-    glEnd();
-
+    
+    glPointSize(pointSize);
+    
+    
   if(clusterdness==NONCLUSTER)
-  {
+  { 
+      //For non-clusterdness or single cluster.
+      std::vector<double> mean = means(points);
+      glBegin(GL_POINTS);
+      glColor4f(0.0, 0.0, 1.0,1.0);
+      glVertex3f(mean[0],mean[1],mean[2]);
+      glEnd();
 
-      glColor4f(1.0, 1.0, 0.0,1.0);
+
+      glColor4f(1.0, 1.0, .0,1.0);
       std::vector<int> pointIndex;
       glBegin(GL_POINTS);
       for (int j = 0; j < points.size(); j++) {
@@ -358,71 +351,69 @@ void drawKmean()
       }
       glEnd();
 
-      glColor4f(.8, .4, .4, 0.4);
+      glColor4f(.8, .4, .1, 0.4);
       cloudpp cloud = radiusXYZ(pointIndex, points,distType);
       glTranslatef(cloud.x, cloud.y, cloud.z);
       MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
 
-
-
   }
-  else if(clusterdness==KMEAN) {
+  else if(clusterdness==KMEAN) 
+  {
 
-      if(spin==0) {
+      if(clusterIndex==0)
+      {
         Kmean km;
-         clusterCollection = km.kmeans(points, k);
-}
+          clusterCollection = km.kmeans(points, k);
+      }
       clusterCollectionSize = clusterCollection.size();
-
-       if(spin>=clusterCollection.size()-1) {
-           spin = clusterCollectionSize - 1;
-           glutIdleFunc(Animate);
-       }
-
-      std::cout<<clusterCollectionSize<<" Size of the collection \n";
-      std::cout<<"Spin value "<<spin<<std::endl;
-         std::vector<std::vector<int> > clusters = clusterCollection[spin];
-         for (int i = 0; i < clusters.size(); i++) {
-
+    if(clusterIndex>=clusterCollectionSize)
+    {
+        clusterIndex = clusterCollectionSize -1;
+        glutIdleFunc(NULL);
+        glutSetWindow( MainWindow );
+        glutPostRedisplay( );
+        std::cout<<" K-mean finished";
+    }
+    std::vector<std::vector<int> > clusters = clusterCollection[clusterIndex];
+    for (int i = 0; i < clusters.size(); i++)
+    {
             glBegin(GL_POINTS);
-             glColor3fv(Colors[i]);
+            glColor3fv(Colors[i]);
 
-             for (int j = 0; j < clusters[i].size(); j++) {
+             for (int j = 0; j < clusters[i].size(); j++)
+             {
                  glVertex3f(points[clusters[i][j]][0], points[clusters[i][j]][1], points[clusters[i][j]][2]);
              }
              glEnd();
-
              glColor4fv(ColorsT[i]);
              //glColor4f(0.9,0.9,0.1, 0.4);
              cloudpp cloud = radiusXYZ(clusters[i], points, distType);
-             //std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
              glTranslatef(cloud.x, cloud.y, cloud.z);
              MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
              glTranslatef(-cloud.x, -cloud.y, -cloud.z);
-         }
+    }
 
 
   }
-
-
-    else{
+  else
+  {
       // Put code for the guassian code.
       RGM rgm(points);
 
-      //std::cout << cloud.radiusX << "\t" << cloud.radiusY << "\t" << cloud.radiusZ << std::endl;
-
       glColor4f(1.0, 1.0, 0.0,1.0);
       glBegin(GL_POINTS);
-      for (int j = 0; j < points.size(); j++) {
+      for (int j = 0; j < points.size(); j++)
+      {
           glVertex3f(points[j][0], points[j][1], points[j][2]);
       }
       glEnd();
      if(clusterdness==GMM)
      {
-         std::vector<cloudpp> cc = rgm.gmmRadiusXYZ(k);
+         std::vector<cloudpp> cc = rgm.gmmRadiusXYZ(gComponent);
+         int i=0;
          for (cloudpp cloud : cc)
          {
-             glColor4f(.8, .1, 1.0, 0.4);
+             glColor4fv(ColorsT[i++]);//(.8, .1, 1.0, 0.4);
              glTranslatef(cloud.x, cloud.y, cloud.z);
              MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
              glTranslatef(-cloud.x, -cloud.y, -cloud.z);
