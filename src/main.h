@@ -528,7 +528,7 @@ MjbSphere(float radiusX, float radiusY,float radiusZ, int slices, int stacks)
 
     // connect the north pole to the latitude NumLats-2:
 
-    glBegin(GL_QUADS);//(GL_LINE_STRIP);
+    glBegin(GL_QUADS);//(GL_LINE_STRIP);//
     for (int ilng = 0; ilng < NumLngs - 1; ilng++)
     {
         p = PtsPointer(NumLats - 1, ilng);
@@ -567,7 +567,7 @@ MjbSphere(float radiusX, float radiusY,float radiusZ, int slices, int stacks)
 
     // connect the other 4-sided polygons:
 
-    glBegin(GL_QUADS);//(GL_LINE_STRIP);
+    glBegin(GL_QUADS);//(GL_LINE_STRIP)
     for (int ilat = 2; ilat < NumLats - 1; ilat++)
     {
         for (int ilng = 0; ilng < NumLngs - 1; ilng++)
