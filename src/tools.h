@@ -28,6 +28,7 @@ std::vector<std::vector<double> > readcsv(const char* filename, char delim,
 
 std::vector<double> means(std::vector<std::vector<double> > points);
 
+arma::mat generateSyntheticData(int )
 
 
 float max(float a, float b);

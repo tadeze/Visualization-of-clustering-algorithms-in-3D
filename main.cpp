@@ -325,7 +325,7 @@ std::vector<std::vector<std::vector<int> > > clusterCollection; // cluster of k-
 
 void drawCluster()
 {
-  
+
     currentswitch=clusterdness;
     std::vector<std::vector<double> > points;
     //Read or generate data source
@@ -334,6 +334,7 @@ void drawCluster()
       points=NULL;
         //Use sythetic data generated.
         std::cout<<"Synthetic data of size ["<<nsample<<","<<ncluster<<"]"<<std::endl;
+
     } else {
         const char *filename = strFileName.c_str();
         points = readcsv(filename, ',', true);
