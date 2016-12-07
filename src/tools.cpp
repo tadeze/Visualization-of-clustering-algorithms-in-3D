@@ -71,6 +71,7 @@ std::vector<double> means(std::vector<std::vector<double> > points)
     return xyz;
 
 }
+
 template <typename T>
 T absolute(T value )
 {

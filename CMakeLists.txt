@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6)
-project(Project4)
+project(ADCvisualization)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O2")
 find_package(GLUT REQUIRED)
 include_directories(${GLUT_INCLUDE_DIRS})
@@ -23,11 +23,11 @@ include_directories(${ARMADILLO_INCLUDE_DIRS})
 #########################################################
 # Include Files
 #########################################################
-add_executable(Project4 src/parser.hh src/glut.h main.cpp src/tools.cpp src/tools.h src/main.h src/kmean.cpp src/kmean.h src/Cloud.cpp src/Cloud.h src/RGM.cpp src/RGM.h)
+add_executable(ADCvisualization src/parser.hh src/glut.h main.cpp src/tools.cpp src/tools.h src/main.h src/kmean.cpp src/kmean.h src/Cloud.cpp src/Cloud.h src/RGM.cpp src/RGM.h)
 
 ########################################################
 # Linking & stuff
 #########################################################
 
 # create the program "test"
-target_link_libraries(Project4 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${ARMADILLO_LIBRARIES})
+target_link_libraries(ADCvisualization ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${ARMADILLO_LIBRARIES})

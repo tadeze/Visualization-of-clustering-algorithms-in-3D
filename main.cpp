@@ -30,10 +30,10 @@ void parseArgument(int argc,char  *argv[])
             .default_value(3);
     p.add_option("-nsample","n").help("Generate N sample size for synthetic data. Default 1000")
             .mode(optionparser::store_value)
-                    .default_value(1000);
+                    .default_value(0);
     p.add_option("-ncluster","c").help("Number of synthetic cluster to use. Defualt 3")
             .mode(optionparser::store_value)
-                    .default_value(3);
+                    .default_value(0);
 
     p.add_option("-metric","m").help("Cluster radius metric calculation."
                                              "0-mean,1-median , 2-max. Defualt MAX of distance from center")
@@ -527,7 +527,7 @@ Keyboard( unsigned char c, int x, int y )
             Scale -=0.1;
             break;
         case '+':
-            Scale+=0.1;
+            Scale+=0.05;
             break;
         case 'q':
         case 'Q':
