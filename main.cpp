@@ -6,7 +6,7 @@
 float Time; // = 1.0;
 int clusterIndex=0;
 int clusterCollectionSize;
-int k;
+int k,ncluster=0,nsample=0;
 int gComponent;
 std::string strFileName;
 #define pointSize 3.0
@@ -27,7 +27,12 @@ void parseArgument(int argc,char  *argv[])
             .mode(optionparser::store_mult_values)
             .required(false)
             .default_value(3);
-
+    p.add_option("-nsample","N").help("Generate N sample size for synthetic data. Default 1000")
+            .mode(optionparser::store_value)
+                    .default_value(1000);
+    p.add_option("-ncluster","c").help("Number of synthetic cluster to use. Defualt 3")
+            .mode(optionparser::store_value)
+                    .default_value(3);
     p.add_option("-input", "-i") .help("Input data.")
             .mode(optionparser::store_value)
                     // .required(true)
@@ -39,8 +44,16 @@ void parseArgument(int argc,char  *argv[])
     if (p.get_value("input"))
     {
         auto names = p.get_value<std::string>("input");
-
         strFileName = names;
+
+    }
+    if(p.get_value("nsample"))
+    {
+        nsample = p.get_value<int>("nsample");
+    }
+    if(p.get_value("ncluster"))
+    {
+        ncluster= p.get_value<int>("ncluster");
     }
 
     if (p.get_value("gmm"))
@@ -249,16 +262,16 @@ Display( )
     glEnable( GL_NORMALIZE );
 
    // if(clusterdness==KMEAN)
-     //   drawKmean();
+     //   drawCluster();
 
     // draw the current object:
    if(clusterdness!=currentswitch)
    {
-       drawKmean();
+       drawCluster();
    }
     if(clusterIndex>0 && clusterIndex<clusterCollectionSize-1)
     {
-        drawKmean();
+        drawCluster();
     }
     glCallList( BoxList );
 
@@ -293,16 +306,10 @@ Display( )
     glLoadIdentity( );
     glColor3f( 1., 1., 1. );
     //DoRasterString( 5., 5., 0., "Text That Doesn't" );
-
-
     // swap the double-buffered framebuffers:
-
     glutSwapBuffers( );
-
-
     // be sure the graphics buffer has been sent:
     // note: be sure to use glFlush( ) here, not glFinish( ) !
-
     glFlush( );
 }
 
@@ -316,14 +323,23 @@ Display( )
 
 std::vector<std::vector<std::vector<int> > > clusterCollection; // cluster of k-mean.
 
-void drawKmean()
+void drawCluster()
 {
-       currentswitch=clusterdness;
-    
-    //Read data source
-    const char* filename = strFileName.c_str();
-    std::vector<std::vector<double> > points = readcsv(filename,',',true);
-    rAvg distType=MAX; //Cluster formuation metric, encolse maximum radius.
+  
+    currentswitch=clusterdness;
+    std::vector<std::vector<double> > points;
+    //Read or generate data source
+    if(nsample>0 && ncluster>0)
+    {
+      points=NULL;
+        //Use sythetic data generated.
+        std::cout<<"Synthetic data of size ["<<nsample<<","<<ncluster<<"]"<<std::endl;
+    } else {
+        const char *filename = strFileName.c_str();
+        points = readcsv(filename, ',', true);
+    }
+
+    rAvg distType=MAX; //Cluster formulation metric, encolse maximum radius.
 
     BoxList = glGenLists(1);
     glNewList(BoxList, GL_COMPILE);
@@ -451,7 +467,7 @@ InitLists( )
 
 
    // if(clusterdness==KMEAN)
-    drawKmean();
+    drawCluster();
 
 
     AxesList = glGenLists( 1 );
