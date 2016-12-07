@@ -18,31 +18,31 @@ void parseArgument(int argc,char  *argv[])
 
     optionparser::parser p("Anomaly detection and clustering algorithm visualization tool");
 
-    p.add_option("-knn", "-k").help("Number of cluster for K-mean algorithm")
+    p.add_option("--knn", "-k").help("Number of cluster for K-mean algorithm")
             .mode(optionparser::store_value)
             .default_value(3);
             //.m_default_value("4");
 
 
-    p.add_option("-gmm","-g").help("Number of cluster of GMM.")
+    p.add_option("--gmm","-g").help("Number of cluster of GMM.")
             .mode(optionparser::store_mult_values)
             .required(false)
             .default_value(3);
-    p.add_option("-nsample","n").help("Generate N sample size for synthetic data. Default 1000")
+    p.add_option("--nsample","n").help("Generate N sample size for synthetic data. Default 1000")
             .mode(optionparser::store_value)
                     .default_value(0);
-    p.add_option("-ncluster","c").help("Number of synthetic cluster to use. Defualt 3")
+    p.add_option("--ncluster","c").help("Number of synthetic cluster to use. Defualt 3")
             .mode(optionparser::store_value)
-                    .default_value(0);
+                    .default_value(3);
 
-    p.add_option("-metric","m").help("Cluster radius metric calculation."
+    p.add_option("--metric","m").help("Cluster radius metric calculation."
                                              "0-mean,1-median , 2-max. Defualt MAX of distance from center")
             .mode(optionparser::store_value)
             .default_value(2);
-    p.add_option("-input", "-i") .help("Input data.")
-            .mode(optionparser::store_value)
+    p.add_option("--input", "-i").help("Input data. 3D data with X, Y,Z value separated by comma")
+            .mode(optionparser::store_value);
                     // .required(true)
-            .default_value("multivariated.txt");
+            //.default_value("multivariated.txt");
 
     p.eat_arguments(argc, argv);
 

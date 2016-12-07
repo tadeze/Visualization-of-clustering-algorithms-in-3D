@@ -38,14 +38,15 @@ cloudpp RGM::radiusXYZ(arma::mat cov,arma::mat mn) {
     float chisqr =2.4477; //95% percentage
     cldpp.x = (float)mn[0];cldpp.y = (float)mn[1];cldpp.z= (float)mn[2];
     //Calculate the size of the minor and major axes
-    cldpp.radiusX=(float)chisqr*sqrt(eigenV[0]);
+    cldpp.radiusX=(float)chisqr*sqrt(eigenV[0]); // raxis = \chi^2_alpha*\sqrt(\lambda_1)
     cldpp.radiusY=(float)chisqr*sqrt(eigenV[1]);
     cldpp.radiusZ=(float)chisqr*sqrt(eigenV[2]);
     return cldpp;
 
 }
 std::vector<cloudpp> RGM::gmmRadiusXYZ(int k){ //Mixture of guassian distribution.
-std::vector<cloudpp> cloudppCollection;
+
+    std::vector<cloudpp> cloudppCollection;
 
     arma::gmm_diag model;
     arma::mat dataT = data.t();
