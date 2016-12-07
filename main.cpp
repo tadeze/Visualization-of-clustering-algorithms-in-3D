@@ -7,6 +7,7 @@ float Time; // = 1.0;
 int clusterIndex=0;
 int clusterCollectionSize;
 int k,ncluster=0,nsample=0;
+rAvg metric;
 int gComponent;
 std::string strFileName;
 #define pointSize 3.0
@@ -27,12 +28,17 @@ void parseArgument(int argc,char  *argv[])
             .mode(optionparser::store_mult_values)
             .required(false)
             .default_value(3);
-    p.add_option("-nsample","N").help("Generate N sample size for synthetic data. Default 1000")
+    p.add_option("-nsample","n").help("Generate N sample size for synthetic data. Default 1000")
             .mode(optionparser::store_value)
                     .default_value(1000);
     p.add_option("-ncluster","c").help("Number of synthetic cluster to use. Defualt 3")
             .mode(optionparser::store_value)
                     .default_value(3);
+
+    p.add_option("-metric","m").help("Cluster radius metric calculation."
+                                             "0-mean,1-median , 2-max. Defualt MAX of distance from center")
+            .mode(optionparser::store_value)
+            .default_value(2);
     p.add_option("-input", "-i") .help("Input data.")
             .mode(optionparser::store_value)
                     // .required(true)
@@ -51,6 +57,12 @@ void parseArgument(int argc,char  *argv[])
     {
         nsample = p.get_value<int>("nsample");
     }
+
+    if(p.get_value("metric"))
+    {
+        metric=(rAvg)p.get_value<int>("metric");
+    }
+
     if(p.get_value("ncluster"))
     {
         ncluster= p.get_value<int>("ncluster");
@@ -331,16 +343,16 @@ void drawCluster()
     //Read or generate data source
     if(nsample>0 && ncluster>0)
     {
-      points=NULL;
+      points= generateSyntheticData(nsample,ncluster);//readcsv(filename, ',', true);
         //Use sythetic data generated.
-        std::cout<<"Synthetic data of size ["<<nsample<<","<<ncluster<<"]"<<std::endl;
+      //  std::cout<<"Synthetic data of size ["<<nsample<<","<<ncluster<<"]"<<std::endl;
 
     } else {
         const char *filename = strFileName.c_str();
         points = readcsv(filename, ',', true);
     }
 
-    rAvg distType=MAX; //Cluster formulation metric, encolse maximum radius.
+    rAvg distType=metric; //Cluster formulation metric, encolse maximum radius.
 
     BoxList = glGenLists(1);
     glNewList(BoxList, GL_COMPILE);

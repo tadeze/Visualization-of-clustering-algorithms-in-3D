@@ -28,7 +28,7 @@ std::vector<std::vector<double> > readcsv(const char* filename, char delim,
 
 std::vector<double> means(std::vector<std::vector<double> > points);
 
-arma::mat generateSyntheticData(int nsample,int ncluster);
+std::vector<std::vector<double> > generateSyntheticData(int nsample,int ncluster);
 
 float max(float a, float b);
 float medianR(std::vector<double> &observations);

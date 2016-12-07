@@ -14,24 +14,22 @@ double median(std::vector<double> &observation){
     return meddd;
 
 }*/
-arma::mat generateSyntheticData(int nsample,int ncluster)
+std::vector<std::vector<double> > generateSyntheticData(int nsample,int ncluster)
 {
 int d=3; //dimension of the data
-arma::mat data(nsample,d, arma::fill::zeros);
-
-arma::vec mean0 = arma::linspace<arma::vec>(0,1,d);
-
-arma::vec mean1 = mean0 + 2;
+arma::mat data(nsample,d, arma::fill::randn);
 
 arma::uword i = 0;
 
-while(i < N)
-{
-if(i < N)  { data.col(i) = mean0 + arma::randn<arma::vec>(d); ++i; }
-if(i < N)  { data.col(i) = mean0 + arma::randn<arma::vec>(d); ++i; }
-if(i < N)  { data.col(i) = mean1 + arma::randn<arma::vec>(d); ++i; }
-}
-return data;
+ std::vector<std::vector<double> > points;
+    for(int i=0;i<data.n_rows;i++) {
+        std::vector<double> temp;
+        for (int j = 0; j < data.n_cols; j++) {
+            temp.push_back(data(i,j));
+        }
+        points.push_back(temp);
+    }
+return points;
 
 }
 
