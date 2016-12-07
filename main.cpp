@@ -209,6 +209,11 @@ Display( )
 
    // glTranslated (0.0, 0.0, 1.5);
     // uniformly scale the scene:
+    if( AxesOn != 0 )
+    {
+        glColor3fv( &Colors[WhichColor][0] );
+        glCallList( AxesList );
+    }
 
     if( Scale < MINSCALE )
         Scale = MINSCALE;
@@ -234,11 +239,6 @@ Display( )
 
     // possibly draw the axes:
 
-    if( AxesOn != 0 )
-    {
-        glColor3fv( &Colors[WhichColor][0] );
-        glCallList( AxesList );
-    }
 
 
 
@@ -327,18 +327,20 @@ void drawKmean()
 
     BoxList = glGenLists(1);
     glNewList(BoxList, GL_COMPILE);
-    
+    //For non-clusterdness or single cluster.
+    std::vector<double> mean = means(points);
+
+//Central point
     glPointSize(pointSize);
-    
-    
+    glBegin(GL_POINTS);
+    glColor4f(0.0, 0.0, 1.0,1.0);
+    glVertex3f(mean[0],mean[1],mean[2]);
+    glEnd();
+
+    glPointSize(pointSize);
+
   if(clusterdness==NONCLUSTER)
   { 
-      //For non-clusterdness or single cluster.
-      std::vector<double> mean = means(points);
-      glBegin(GL_POINTS);
-      glColor4f(0.0, 0.0, 1.0,1.0);
-      glVertex3f(mean[0],mean[1],mean[2]);
-      glEnd();
 
 
       glColor4f(1.0, 1.0, .0,1.0);
@@ -351,7 +353,7 @@ void drawKmean()
       }
       glEnd();
 
-      glColor4f(.8, .4, .1, 0.4);
+      glColor4f(.8, .1, .4, 0.4);
       cloudpp cloud = radiusXYZ(pointIndex, points,distType);
       glTranslatef(cloud.x, cloud.y, cloud.z);
       MjbSphere(cloud.radiusX, cloud.radiusY, cloud.radiusZ, 30, 30);
@@ -492,6 +494,12 @@ Keyboard( unsigned char c, int x, int y )
             else
                 glutIdleFunc(Animate);
             break;
+        case '-':
+            Scale -=0.1;
+            break;
+        case '+':
+            Scale+=0.1;
+            break;
         case 'q':
         case 'Q':
         case ESCAPE:
@@ -602,7 +610,7 @@ Reset( )
     AxesOn = 1;
     DebugOn = 0;
     DepthCueOn = 0;
-    Scale  = 1.0;
+    Scale  = 1.;
     WhichColor = WHITE;
     WhichProjection = PERSP;
     Xrot = Yrot = 0.;
