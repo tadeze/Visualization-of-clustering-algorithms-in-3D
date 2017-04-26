@@ -14,11 +14,28 @@ double median(std::vector<double> &observation){
     return meddd;
 
 }*/
+arma::mat rotatMatrix()
+{
+    int d = 4;
+    arma::mat data(d,d, arma::fill::randn);
+    arma::mat Q,R,M;
+    arma::qr(Q,R,data);
+    M = arma::dot(M,arma::diagmat(arma::diagmat(arma::sign(R))));
+    if (arma::det(M)<0)
+        M.col(0) = -1*M.col(0);
+    return M;
+    //A = np.random.normal(size=[n,n])
+    //Q,R = np.linalg.qr(A)
+    //M = Q.dot(np.diag(np.sign(np.diag(R))))
+    //if np.linalg.det(M)<0:
+    //M[:,0] = -M[:,0]
+    //return M
+}
 std::vector<std::vector<double> > generateSyntheticData(int nsample,int ncluster)
 {
 int d=3; //dimension of the data
 arma::mat data(nsample,d, arma::fill::randn);
-
+//TODO:Update with normal distribution std::normal_distribution<double> distribution(0.0,1.0);
 arma::uword i = 0;
 
  std::vector<std::vector<double> > points;

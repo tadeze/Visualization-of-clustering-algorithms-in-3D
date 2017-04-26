@@ -60,7 +60,7 @@ Code is in the textureMapping function.
 #pragma region declaration
 // title of these windows:
 
-const char *WINDOWTITLE = { "OpenGL / GLUT Sample -- Joe Graphics" };
+const char *WINDOWTITLE = { "Visualization of multivariate clustering" };
 const char *GLUITITLE   = { "User Interface Window" };
 
 

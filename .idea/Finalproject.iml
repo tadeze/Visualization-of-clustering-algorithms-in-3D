@@ -10,7 +10,9 @@
       <sourceFolder url="file://$MODULE_DIR$/src/parser.hh" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/kmean.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/PCA.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/glut.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/PCA.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/kmean.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/tools.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
