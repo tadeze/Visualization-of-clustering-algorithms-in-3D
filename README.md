@@ -1,13 +1,13 @@
 ## Multivariate Elliptical distribution and clustering algorithm Visualization
 Visualizing 3D clustering/AD algorithms using OpenGL.
 
-Algorithms include
+Algorithms included
 - K-mean algorithm
 - Gaussian Mixture Model (GMM)
 - Single Gaussian Model.
 
 **Required**
-- Armadiilo 7.5 or later
+- Armadillo 7.5 or later
 - Glut and OpenGL libraries.
 - g++ 4.9 or compiler with C++11 support.
 
