@@ -1,4 +1,4 @@
-## Multivariate Elliptical distribution and clustering algorithm Visualization
+## Multivariate Elliptical Distribution and Clustering Algorithm Visualization in 3D
 Visualizing 3D clustering/AD algorithms using OpenGL.
 
 Algorithms included
